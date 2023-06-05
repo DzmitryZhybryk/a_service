@@ -6,11 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 
-from app.dependencies import AuthenticationStorage
-from app.routes import router as auth_router
+from app.api.routes import router as auth_router
+from app.api.services import AuthenticationStorage
+from app.database.db import engine, Base
+from app.database.db import use_session
+from app.utils.funcs import get_app_metadata
 
-authentication_storage_handle = AuthenticationStorage()
-app_metadata = asyncio.run(authentication_storage_handle.get_app_metadata())
+app_metadata = asyncio.run(get_app_metadata())
 
 parser = ArgumentParser()
 
@@ -32,29 +34,18 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/v1")
 
 
-# @app.on_event("startup")
-# async def on_startup() -> None:
-# if logging.sentry_activate:
-#     sentry_sdk.init(
-#         dsn="https://65de844898564b009441a526b7877f44@o4504518318292992.ingest.sentry.io/4504518327533568",
-#         traces_sample_rate=1,
-#     )
-
-# logger.info(f"Начало работы {APP_NAME}")
-# metadata.create_all(engine)
-# logger.info("Создание таблиц в базе данных")
-#
-# await database.connect()
-# logger.info("Установлено соединение с базой данных")
-# init_data = UserHandlers()
-# await init_data.create_init_data()
-# logger.info("Создание init данных в базе данных")
+@app.on_event("startup")
+async def on_startup() -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        async for session in use_session():
+            authentication_storage_handle = AuthenticationStorage(session=session)
+            await authentication_storage_handle.create_init_roles()
 
 
-# @app.on_event("shutdown")
-# async def on_shutdown() -> None:
-#     await database.disconnect()
-#     logger.info(f"{APP_NAME} остановлен")
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    await engine.dispose()
 
 
 # @app.exception_handler(RequestValidationError)

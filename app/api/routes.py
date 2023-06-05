@@ -4,9 +4,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app import dependencies
-from app import schemas
-from app.handlers import AuthenticationHandlers
+from app.api import dependencies, schemas
+from app.api.handlers import AuthenticationHandlers
+from app.utils.funcs import get_app_metadata
 
 router = APIRouter()
 
@@ -14,6 +14,11 @@ BaseHandlerDep = Annotated[AuthenticationHandlers, Depends(dependencies.authenti
 
 
 @router.get("/", response_model=schemas.AppInfo, tags=["Index"])
-async def index_page(handle: BaseHandlerDep):
-    application_metadata = await handle.get_metadata()
+async def index_page():
+    application_metadata = await get_app_metadata()
     return application_metadata
+
+
+@router.post("/")
+async def test_rout(handler: BaseHandlerDep):
+    await handler.test()

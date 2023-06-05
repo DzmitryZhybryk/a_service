@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
-
+from app.api import schemas
 import aiofiles
 import toml
 
@@ -28,6 +28,3 @@ class TomlWorker(FileWorker):
             file_data = await file.read()
             parsed_toml = toml.loads(file_data)
             return parsed_toml
-
-
-toml_worker = TomlWorker(base_config.pyproject_toml_path)

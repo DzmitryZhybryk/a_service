@@ -9,8 +9,12 @@ RunModeType = Literal['dev', 'test', 'prod']
 
 
 class BaseConfig(BaseSettings):
+    database_url: str
     base_dir: Path = BASE_DIR
     pyproject_toml_path: Path = BASE_DIR / "pyproject.toml"
+
+    class Config:
+        env_file = BASE_DIR / ".env"
 
 
 class LoggingConfig(BaseSettings):

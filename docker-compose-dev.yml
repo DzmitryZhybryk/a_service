@@ -17,18 +17,18 @@ services:
       - postgres
     tty: true
 
-#  postgres:
-#    image: postgres:latest
-#    container_name: postgres
-#    ports:
-#      - "5432:5432"
-#    restart: always
-#    env_file:
-#      - .env
-#    volumes:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    env_file:
+      - .env
+    volumes:
 #      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-#      - postgres-db:/var/lib/postgresql/data
-#    tty: true
-#
-#volumes:
-#  postgres-db:
+      - postgres-db:/var/lib/postgresql/data
+    tty: true
+
+volumes:
+  postgres-db:

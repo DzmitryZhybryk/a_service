@@ -1,0 +1,6 @@
+.idea/
+.env
+.pdm-python
+authentication_service.egg-info
+*py*cache*
+logs

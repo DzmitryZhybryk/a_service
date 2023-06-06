@@ -1,6 +1,7 @@
 from app.api import schemas
 from app.config import base_config, logging_config
 from app.utils.file_worker import TomlWorker
+from datetime import datetime, timezone
 
 
 def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
@@ -21,3 +22,14 @@ async def get_app_metadata() -> schemas.AppInfo:
                                       environment=logging_config.environment, run_mode=logging_config.run_mode,
                                       logs_dir=logging_config.logging_dir)
     return response_schema
+
+
+def get_current_time_with_utc() -> datetime:
+    """
+    Функция для получения текущего времени с UTC
+
+    Returns:
+        Текущее время
+
+    """
+    return datetime.now(timezone.utc)

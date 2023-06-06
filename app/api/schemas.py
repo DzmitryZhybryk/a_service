@@ -13,3 +13,8 @@ class AppInfo(AppMetadata):
     environment: str
     run_mode: RunModeType
     logs_dir: Path
+
+
+class IncorrectLoginData(BaseModel):
+    """Pydantic model describe incorrect username or password response"""
+    detail: str = "Incorrect username or password"

@@ -38,9 +38,9 @@ app.include_router(auth_router, prefix="/api/v1")
 async def on_startup() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        async for session in use_session():
-            authentication_storage_handle = AuthenticationStorage(session=session)
-            await authentication_storage_handle.create_init_roles()
+    async for session in use_session():
+        authentication_storage_handle = AuthenticationStorage(session=session)
+        await authentication_storage_handle.create_init_database_data()
 
 
 @app.on_event("shutdown")

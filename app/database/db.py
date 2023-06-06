@@ -1,3 +1,4 @@
+"""Module for storage database connects and session"""
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
@@ -13,6 +14,13 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 
 async def use_session() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Function for create database session
+
+    Returns:
+        database session
+
+    """
     async with async_session() as session:
         try:
             yield session

@@ -1,10 +1,16 @@
+"""Module for storage AuthenticationHandler class"""
 from app.api.services import AuthenticationStorage
 
 
 class AuthenticationHandlers:
+    """
+    Class contains handlers for requests to the API authentication service
 
-    def __init__(self, storage: AuthenticationStorage):
+    Args:
+        storage: an instance of the AuthenticationStorage class
+
+    """
+
+    def __init__(self, storage: AuthenticationStorage) -> None:
+        """Inits AuthenticationHandlers class"""
         self.__services = storage
-
-    async def test(self):
-        await self.__services.test1()

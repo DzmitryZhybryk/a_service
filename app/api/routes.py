@@ -1,5 +1,4 @@
-"""Модуль для работы с роутами приложения."""
-
+"""Module for storage authentication service routes"""
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -17,8 +16,3 @@ BaseHandlerDep = Annotated[AuthenticationHandlers, Depends(dependencies.authenti
 async def index_page():
     application_metadata = await get_app_metadata()
     return application_metadata
-
-
-@router.post("/")
-async def test_rout(handler: BaseHandlerDep):
-    await handler.test()

@@ -71,6 +71,13 @@ From directory with docker-compose file run command:
 docker compose -f .\docker-compose-dev.yml up -d
 ```
 
+## Database migration
+
+```bash
+alembic revision --autogenerate -m {revision_name}
+alembic upgrade head
+```
+
 ## Swagger documentation
 
 Documentation available on `/api/v1/docs/`

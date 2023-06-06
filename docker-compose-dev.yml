@@ -4,7 +4,7 @@ services:
   authentication:
     build: .
     container_name: authentication
-    command: pdm run hypercorn --bind 0.0.0.0:8001 --reload --access-logfile - app.main:app
+    command: pdm run start
     restart: always
     volumes:
       - ./app/:/code/app

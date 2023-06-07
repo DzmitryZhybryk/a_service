@@ -8,7 +8,7 @@ from hypercorn.config import Config
 
 from app.api.routes import router as auth_router
 from app.api.services import AuthenticationStorage
-from app.database.db import engine, Base
+from app.database.db import engine
 from app.database.db import use_session
 from app.utils.funcs import get_app_metadata
 
@@ -16,9 +16,9 @@ app_metadata = asyncio.run(get_app_metadata())
 
 parser = ArgumentParser()
 
-parser.add_argument("--host", help=f"Application host", type=str, default="0.0.0.0")
+parser.add_argument("--host", help=f"IPv4/IPv6 address API server would listen on", default="0.0.0.0")
 
-parser.add_argument("--port", help=f"Application port", type=str, default=8001)
+parser.add_argument("--port", help=f"TCP port API server would listen on", type=int, default=8001)
 
 app = FastAPI(docs_url="/api/v1/docs", redoc_url="/api/v1/redoc", title=app_metadata.name, version=app_metadata.version,
               description=app_metadata.description, swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"})

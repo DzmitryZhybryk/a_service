@@ -465,10 +465,6 @@ content_hash = "sha256:09dcf774e46997b53d17c6f09b0aaf13e16fcf91bf457d4855a949f90
     {url = "https://files.pythonhosted.org/packages/5e/5f/82c8074f7e84978129347c2c6ec8b6c59f3584ff1a20bc3c940a3e061790/priority-2.0.0-py3-none-any.whl", hash = "sha256:6f8eefce5f3ad59baf2c080a664037bb4725cd0a790d53d59ab4059288faf6aa"},
     {url = "https://files.pythonhosted.org/packages/f5/3c/eb7c35f4dcede96fca1842dac5f4f5d15511aa4b52f3a961219e68ae9204/priority-2.0.0.tar.gz", hash = "sha256:c965d54f1b8d0d0b19479db3924c7c36cf672dbf2aec92d43fbdaf4492ba18c0"},
 ]
-"psycopg 3.1.9" = [
-    {url = "https://files.pythonhosted.org/packages/7f/56/6463b9b47400710819153dcdfecf29d6d2f63f772e524f94b090fe5716a2/psycopg-3.1.9.tar.gz", hash = "sha256:ab400f207a8c120bafdd8077916d8f6c0106e809401378708485b016508c30c9"},
-    {url = "https://files.pythonhosted.org/packages/c6/53/729709c14684fa8e53b6a95ac75d35c3928b142a9091b78382609fabf2b2/psycopg-3.1.9-py3-none-any.whl", hash = "sha256:fbbac339274d8733ee70ba9822297af3e8871790a26e967b5ea53e30a4b74dcc"},
-]
 "psycopg-binary 3.1.9" = [
     {url = "https://files.pythonhosted.org/packages/01/4e/fbb893f6453a1a8ad9405dfcc2bafdf5a852808193718a8e073860e7adc7/psycopg_binary-3.1.9-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:03b08545ce1c627f4d5e6384eda2946660c4ba6ceb0a09ae47de07419f725669"},
     {url = "https://files.pythonhosted.org/packages/08/00/aea282cfd33a533490f8160e544a732401df3006b8485fbce199b408d427/psycopg_binary-3.1.9-cp37-cp37m-musllinux_1_1_aarch64.whl", hash = "sha256:5cdc13c8ec1437240801e43d07e27ff6479ac9dd8583ecf647345bfd2e8390e4"},
@@ -524,6 +520,10 @@ content_hash = "sha256:09dcf774e46997b53d17c6f09b0aaf13e16fcf91bf457d4855a949f90
     {url = "https://files.pythonhosted.org/packages/ee/8b/b94fcdd30736a98d48d9217ad2000d4cb22bd789bfa885c70e3bf2143253/psycopg_binary-3.1.9-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:f41a9e0de4db194c053bcc7c00c35422a4d19d92a8187e8065b1c560626efe35"},
     {url = "https://files.pythonhosted.org/packages/f9/28/44c58c23a8f9e892b9bd759fb5bbba17755131a2059acbbd7c08dc0c7197/psycopg_binary-3.1.9-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:c7d990f14a37345ca05a5192cd5ac938c9cbedca9c929872af6ae311158feb0e"},
     {url = "https://files.pythonhosted.org/packages/ff/47/301b5454f79f8c65a617670844ad9074f3ef641cb12e46bec5a5cf95568d/psycopg_binary-3.1.9-cp311-cp311-musllinux_1_1_ppc64le.whl", hash = "sha256:a274c63c8fb9d419509bed2ef72befc1fd04243972e17e7f5afc5725cb13a560"},
+]
+"psycopg 3.1.9" = [
+    {url = "https://files.pythonhosted.org/packages/7f/56/6463b9b47400710819153dcdfecf29d6d2f63f772e524f94b090fe5716a2/psycopg-3.1.9.tar.gz", hash = "sha256:ab400f207a8c120bafdd8077916d8f6c0106e809401378708485b016508c30c9"},
+    {url = "https://files.pythonhosted.org/packages/c6/53/729709c14684fa8e53b6a95ac75d35c3928b142a9091b78382609fabf2b2/psycopg-3.1.9-py3-none-any.whl", hash = "sha256:fbbac339274d8733ee70ba9822297af3e8871790a26e967b5ea53e30a4b74dcc"},
 ]
 "pydantic 1.10.8" = [
     {url = "https://files.pythonhosted.org/packages/05/43/e39c6bf32695f2d568ebb2f6a3dd843c8e2edb57c77a4a911d517b5675b2/pydantic-1.10.8-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:35db5301b82e8661fa9c505c800d0990bc14e9f36f98932bb1d248c0ac5cada5"},

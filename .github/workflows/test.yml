@@ -1,9 +1,8 @@
-name: integration_tests
+name: test
 
 on:
   pull_request:
-    branches:
-      - 'feature/**'
+    branches: [ "feature/CI" ]
 
 jobs:
   build:

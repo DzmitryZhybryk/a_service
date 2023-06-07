@@ -23,5 +23,5 @@ class IncorrectLoginData(BaseModel):
     detail: str = "Incorrect username or password"
 
 
-class TestClass(BaseModel):
-    pass
+# class TestClass(BaseModel):
+#     pass

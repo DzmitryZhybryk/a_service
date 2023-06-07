@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+
+  authentication:
+    extends:
+      file: docker-compose-base.yml
+      service: authentication
+    command: pdm run test
+    depends_on:
+      - postgres
+
+  postgres:
+    extends:
+      file: docker-compose-base.yml
+      service: postgres
+
+volumes:
+  postgres-db:

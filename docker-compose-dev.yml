@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+
+  authentication:
+    build:
+      context: .
+      args:
+        - INSTALL_COMMAND=i-dev
+    extends:
+      file: docker-compose-base.yml
+      service: authentication
+    command: pdm run start
+    restart: always
+    depends_on:
+      - postgres
+
+
+  postgres:
+    restart: always
+    extends:
+      file: docker-compose-base.yml
+      service: postgres
+
+volumes:
+  postgres-db:

@@ -1,0 +1,41 @@
+
+[project]
+name = "authentication_service"
+version = "0.0.1"
+description = "Service for authentication users"
+authors = [
+    {name = "Dzmitry Zhybryk", email = "mr.zhybryk@gmail.com"},
+]
+dependencies = [
+    "fastapi>=0.95.2",
+    "fastapi-jwt-auth>=0.5.0",
+    "hypercorn>=0.14.3",
+    "toml>=0.10.2",
+    "psycopg[binary]>=3.1.9",
+    "sqlalchemy[asyncio]>=2.0.15",
+    "bcrypt>=4.0.1",
+    "passlib>=1.7.4",
+    "pydantic[dotenv]>=1.10.8",
+    "aiofiles>=23.1.0",
+    "alembic>=1.11.1",
+]
+
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+
+[tool.pdm.scripts]
+pre_start = { composite = ["pdm run alembic upgrade head"]}
+i-prod = "pdm install --prod"
+i-dev = "pdm install --dev -G test"
+start = "pdm run hypercorn --bind 0.0.0.0:8001 --reload --access-logfile - app.main:app"
+test = "pdm run pytest"
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest>=7.3.1",
+    "pytest-alembic>=0.10.5",
+    "httpx>=0.24.1",
+    "pytest-asyncio>=0.21.0",
+    "pytest-check>=2.1.5",
+]

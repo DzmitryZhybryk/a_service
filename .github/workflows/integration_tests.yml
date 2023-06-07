@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-        name: Run integration test inside docker compose
+      - name: Run integration test inside docker compose
+        uses: actions/checkout@v3
         with:
           compose-file: "./docker-compose-test.yml"
 

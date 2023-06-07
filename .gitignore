@@ -4,3 +4,4 @@
 authentication_service.egg-info
 *py*cache*
 logs
+.pytest_cache

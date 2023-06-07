@@ -78,6 +78,14 @@ alembic revision --autogenerate -m {revision_name}
 alembic upgrade head
 ```
 
+## Tests
+
+For start tests inside docker compose use command:
+
+```bash
+docker compose -f .\docker-compose-test.yml up --abort-on-container-exit --build
+```
+
 ## Swagger documentation
 
 Documentation available on `/api/v1/docs/`

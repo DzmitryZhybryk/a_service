@@ -2,7 +2,7 @@ name: integration_tests
 
 on:
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "feature/**" ]
 
 jobs:
   build:

@@ -26,4 +26,13 @@ license = {text = "MIT"}
 
 [tool.pdm.scripts]
 pre_start = { composite = ["pdm run alembic upgrade head"]}
+i-prod = "pdm install --prod"
+i-dev = "pdm install --dev -G test"
 start = "pdm run hypercorn --bind 0.0.0.0:8001 --reload --access-logfile - app.main:app"
+test = "pdm run pytest"
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest>=7.3.1",
+    "pytest-alembic>=0.10.5",
+]

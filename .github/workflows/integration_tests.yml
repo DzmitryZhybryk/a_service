@@ -1,7 +1,7 @@
 name: integration_tests
 
 on:
-  pull_request:
+  push:
     branches:
       - 'feature/**'
 

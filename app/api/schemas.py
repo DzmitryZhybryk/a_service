@@ -21,3 +21,6 @@ class AppInfo(AppMetadata):
 class IncorrectLoginData(BaseModel):
     """Pydantic model describe incorrect username or password response"""
     detail: str = "Incorrect username or password"
+
+# class TestClass(BaseModel):
+#     pass

@@ -80,7 +80,32 @@ alembic upgrade head
 
 ## Tests
 
-For start tests inside docker compose use command:
+### Unit-tests
+
+```
+Unit-tests run automatically when you push into feature/* branch
+```
+
+For start unit_tests inside docker:
+```bash
+docker build -f .\{Path_to_Dockerfile_unittests} . -t {container_name}
+docker run --env-file {Path_to_env_file} {container_name}
+```
+
+example from root dir:
+
+```bash
+docker build -f .\Dockerfile_unittests . -t auth_unittests
+docker run --env-file .env auth_unittests
+```
+
+### Integration-tests
+
+```
+Integration-tests run automatically after pull-request to the develop branch
+```
+
+For start integration_tests inside docker compose use command:
 
 ```bash
 docker compose -f .\docker-compose-test.yml up --abort-on-container-exit --build

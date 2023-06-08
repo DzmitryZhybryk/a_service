@@ -14,6 +14,7 @@ jobs:
       - name: Make .env file and run integration test inside docker compose
         run: |
           echo run unit tests
+          echo "${{ secrets.ENV_FILE }}"
 #          echo "${{ secrets.ENV_FILE }}" > .env
 #          docker compose -f ./docker-compose-test.yml up --abort-on-container-exit --build
 

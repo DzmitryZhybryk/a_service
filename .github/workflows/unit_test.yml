@@ -11,16 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Make .env file and run integration test inside docker compose
+      - name: make .env file and run unit-tests inside docker
         run: |
-          echo run unit tests
-          echo "${{ secrets.ENV_FILE }}"
-#          echo "${{ secrets.ENV_FILE }}" > .env
-#          docker compose -f ./docker-compose-test.yml up --abort-on-container-exit --build
-
-#       # Runs a set of commands using the runners shell
-#       - name: Run a multi-line script
-#         run: |
-#           echo Add other actions to build,
-#           echo test, and deploy your project.
-#           echo test, and deploy your project.
+          echo "${{ secrets.ENV_FILE }}" > .env
+          docker build -f .\Dockerfile_unittests . -t auth_unittests
+          docker run --env-file .env auth_unittests

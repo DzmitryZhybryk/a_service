@@ -58,8 +58,8 @@ class LoggingConfig(BaseSettings):
 class EmailConfig(BaseSettings):
     smtp_server_host: str = "smtp.gmail.com"
     smtp_server_port: int = 587
-    work_mail: str
-    work_mail_password: str
+    work_email: str
+    work_email_password: str
 
     class Config:
         env_file = BASE_DIR / ".env"

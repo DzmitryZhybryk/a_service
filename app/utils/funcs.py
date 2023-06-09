@@ -9,7 +9,7 @@ from app.utils.file_worker import TomlWorker
 
 def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
     """
-    Function find app metadata in dict
+    Function finds app metadata in the dict
 
     Args:
         project_data: dict with app metadata
@@ -28,7 +28,7 @@ def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
 
 async def get_app_metadata() -> schemas.AppInfo:
     """
-    Function build app metadata from pyproject.toml file
+    Function builds app metadata from pyproject.toml file
 
     Returns:
         pydantic model with all app information
@@ -46,23 +46,43 @@ async def get_app_metadata() -> schemas.AppInfo:
 
 def get_current_time_with_utc() -> datetime:
     """
-    Функция для получения текущего времени с UTC
+    Function return current time with utc
 
     Returns:
-        Текущее время
+        current time with utc
 
     """
     return datetime.now(timezone.utc)
 
 
 def __make_rout_with_path(url: str, path_param: str) -> str:
-    """Function concatenate base url and path param"""
-    template = Template("$base_url$mail/")
-    result = template.substitute(base_url=url, mail=path_param)
+    """
+    Function concatenate rout url and path param
+
+    Args:
+        url: rout url
+        path_param: path param
+
+    Returns:
+        concatenated url and path param
+
+    """
+    template = Template("$base_url$email/")
+    result = template.substitute(base_url=url, email=path_param)
     return result
 
 
-def make_confirm_registration_url(user_mail: str | bytes) -> str:
+def make_confirm_registration_url(user_email: str) -> str:
+    """
+    Function makes url for confirm user registration
+
+    Args:
+        user_email: registered user email
+
+    Returns:
+        url for confirm new user registration
+
+    """
     base_url = base_config.confirm_registration_url
-    result_url = __make_rout_with_path(url=base_url, path_param=user_mail)
+    result_url = __make_rout_with_path(url=base_url, path_param=user_email)
     return result_url

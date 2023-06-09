@@ -24,6 +24,6 @@ async def registrate_user(user_data: schemas.RegistrateUser, handler: BaseHandle
     await handler.registrate_user(user_data=user_data)
 
 
-@router.get("/registrate/activate/{mail}/")
-async def confirm_registration(mail: str, handler: BaseHandlerDep):
-    await handler.confirm_registration(mail=mail)
+@router.get("/registrate/activate/{email}/")
+async def confirm_registration(email: str, handler: BaseHandlerDep):
+    await handler.confirm_registration(email=email)

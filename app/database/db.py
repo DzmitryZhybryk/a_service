@@ -15,7 +15,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 async def use_session() -> AsyncGenerator[AsyncSession, None]:
     """
-    Function for create database session
+    Function creates database session
 
     Returns:
         database session

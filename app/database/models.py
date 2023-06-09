@@ -10,12 +10,14 @@ from app.utils.funcs import get_current_time_with_utc
 
 
 class DateFieldMixin:
+    """Class mixin adds create and update data fields to the database models"""
     created_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True),
                                                             default=get_current_time_with_utc())
     updated_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class Role(Base):
+    """Database model, describes the table of roles in the database"""
     __tablename__ = "roles"
     __table_args__ = (
         CheckConstraint(f"role in {base_config.user_roles}"),
@@ -36,6 +38,7 @@ class Role(Base):
 
 
 class User(Base, DateFieldMixin):
+    """Database model, describes the table of users in the database"""
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)

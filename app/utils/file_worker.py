@@ -16,6 +16,7 @@ class FileWorker(ABC):
     """
 
     def __init__(self, path_to_file: str) -> None:
+        """Inits FileWorker class"""
         self.__path_to_file = path_to_file
 
     @abstractmethod
@@ -33,6 +34,7 @@ class TomlWorker(FileWorker):
     """
 
     def __init__(self, path_to_file: str) -> None:
+        """Inits TomlWorker class"""
         super().__init__(path_to_file)
         self.__path_to_file = path_to_file
 

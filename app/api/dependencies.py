@@ -9,7 +9,7 @@ from app.database.db import use_session
 
 def authentication_storage(session: AsyncSession = Depends(use_session)) -> AuthenticationStorage:
     """
-    Dependency, used as a handle for work with AuthenticationStorage
+    Dependency, gets database session. Used as a handle for work with AuthenticationStorage
 
     Args:
         session: database session
@@ -23,7 +23,8 @@ def authentication_storage(session: AsyncSession = Depends(use_session)) -> Auth
 
 def authentication_handler(storage: AuthenticationStorage = Depends(authentication_storage)) -> AuthenticationHandlers:
     """
-    Dependency, used as a handle for work with AuthenticationHandlers
+    Dependency, gets an instance of the AuthenticationStorage class.
+    Used as a handle for work with AuthenticationHandlers
 
     Args:
         storage: an instance of the AuthenticationStorage class

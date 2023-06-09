@@ -1,12 +1,15 @@
 """Module for storage AuthenticationStorage class"""
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api import schemas
 from app.config import base_config, init_config
 from app.database.models import Role, User
-from app.utils.password_manager import PasswordManager
 from app.utils import decorators
+from app.utils.funcs import make_confirm_registration_url
+from app.utils.mail import mail_worker
+from app.utils.password_manager import PasswordManager
+from app.utils.serializer import serializer
 
 
 class AuthenticationStorage:
@@ -83,7 +86,7 @@ class AuthenticationStorage:
             hashed_password = PasswordManager(password=init_config.password).hash_password()
             stmt = insert(User).values(username=init_config.username, password=hashed_password,
                                        nickname=init_config.nickname, email=init_config.email,
-                                       role_id=init_user_role.id)
+                                       role_id=init_user_role.id, is_user_activate=True)
 
             await self.__session.execute(statement=stmt)
             await self.__session.commit()
@@ -113,4 +116,18 @@ class AuthenticationStorage:
         stmt = insert(User).returning(User).values(role_id=user_role.id, password=hashed_password,
                                                    **user_data.dict(exclude={"role", "password", "confirm_password"}))
         await self.__session.execute(stmt)
+        serialize_email = serializer.serialize_secret_data(secret_data=user_data.email)
+        confirm_registration_url = make_confirm_registration_url(user_mail=serialize_email)
+        mail_worker.send_mail(recipient=user_data.email, send_data=confirm_registration_url,
+                              subject="Confirm registration")
         await self.__session.commit()
+
+    async def activate_person_in_database(self, mail: str):
+        user_email = serializer.deserialize_secret_data(secret_data=mail)
+        from sqlalchemy.orm import selectinload
+        # stmt = select(self.__user_mode).where(User.email == user_email).options(selectinload(User.role))
+        stmt = update(self.__user_mode).where(User.email == user_email).values(is_user_activate=True)
+        await self.__session.execute(stmt)
+        await self.__session.commit()
+        # print("###############")
+        # print(user)

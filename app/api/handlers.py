@@ -31,3 +31,5 @@ class AuthenticationHandlers:
         """
         await self.__services.add_user_to_db(user_data=user_data)
 
+    async def confirm_registration(self, mail: str):
+        await self.__services.activate_person_in_database(mail=mail)

@@ -1,7 +1,7 @@
 """Module for storage database models"""
 import datetime
 
-from sqlalchemy import String, DateTime, ForeignKey, CheckConstraint, Date
+from sqlalchemy import String, DateTime, ForeignKey, CheckConstraint, Date, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config import base_config
@@ -47,6 +47,8 @@ class User(Base, DateFieldMixin):
     last_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     birthday: Mapped[datetime.date | None] = mapped_column(Date, nullable=True)
     main_photo: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    is_user_activate: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    activated_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     role_id: Mapped[int] = mapped_column(ForeignKey(Role.id))
     role: Mapped["Role"] = relationship(back_populates="users")
 

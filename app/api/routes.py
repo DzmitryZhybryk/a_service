@@ -22,3 +22,8 @@ async def index_page():
              tags=["Authentication"])
 async def registrate_user(user_data: schemas.RegistrateUser, handler: BaseHandlerDep):
     await handler.registrate_user(user_data=user_data)
+
+
+@router.get("/registrate/activate/{mail}/")
+async def confirm_registration(mail: str, handler: BaseHandlerDep):
+    await handler.confirm_registration(mail=mail)

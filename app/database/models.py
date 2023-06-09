@@ -10,7 +10,8 @@ from app.utils.funcs import get_current_time_with_utc
 
 
 class DateFieldMixin:
-    created_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=get_current_time_with_utc())
+    created_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True),
+                                                            default=get_current_time_with_utc())
     updated_date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
@@ -52,7 +53,8 @@ class User(Base, DateFieldMixin):
     def __str__(self):
         return f"User(id={self.id!r}, username={self.username!r}, password={self.password!r}, " \
                f"nickname={self.nickname!r}, email={self.email!r}, first_name={self.first_name!r}, " \
-               f"last_name={self.last_name!r},  role_id={self.role_id!r}, role={self.role!r})"
+               f"last_name={self.last_name!r},  role_id={self.role_id!r}, role={self.role!r}, " \
+               f"birthday={self.birthday!r}, main_photo={self.main_photo!r})"
 
     def __repr__(self):
         return str(self)

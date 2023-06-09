@@ -1,3 +1,4 @@
+"""Module for storage config classes"""
 from pathlib import Path
 from typing import Literal
 

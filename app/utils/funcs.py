@@ -1,10 +1,22 @@
+"""Module for storage utils funcs"""
+from datetime import datetime, timezone
+
 from app.api import schemas
 from app.config import base_config, logging_config
 from app.utils.file_worker import TomlWorker
-from datetime import datetime, timezone
 
 
 def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
+    """
+    Method find app metadata in dict
+
+    Args:
+        project_data: dict with app metadata
+
+    Returns:
+        pydantic model with app metadata
+
+    """
     app_name = project_data.get("project").get("name")
     app_version = project_data.get("project").get("version")
     app_description = project_data.get("project").get("description")
@@ -14,6 +26,13 @@ def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
 
 
 async def get_app_metadata() -> schemas.AppInfo:
+    """
+    Method get app metadata from pyproject.toml file
+
+    Returns:
+        pydantic model with all app information
+
+    """
     toml_worker = TomlWorker(base_config.pyproject_toml_path)
     data_from_pyproject_toml = await toml_worker.read_file()
     app_metadata = __get_metadata_from_dict(project_data=data_from_pyproject_toml)

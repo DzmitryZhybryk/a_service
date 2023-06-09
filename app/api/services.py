@@ -2,9 +2,11 @@
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api import schemas
 from app.config import base_config, init_config
 from app.database.models import Role, User
 from app.utils.password_manager import PasswordManager
+from app.utils import decorators
 
 
 class AuthenticationStorage:
@@ -79,9 +81,9 @@ class AuthenticationStorage:
         if not await self.__is_user_exist():
             init_user_role = await self.__get_role(role=init_config.role)
             hashed_password = PasswordManager(password=init_config.password).hash_password()
-            stmt = insert(User).returning(User).values(username=init_config.username, password=hashed_password,
-                                                       nickname=init_config.nickname, email=init_config.email,
-                                                       role_id=init_user_role.id)
+            stmt = insert(User).values(username=init_config.username, password=hashed_password,
+                                       nickname=init_config.nickname, email=init_config.email,
+                                       role_id=init_user_role.id)
 
             await self.__session.execute(statement=stmt)
             await self.__session.commit()
@@ -93,3 +95,22 @@ class AuthenticationStorage:
         """
         await self.__create_init_roles()
         await self.__creat_init_user()
+
+    @decorators.integrity_error_handler
+    async def add_user_to_db(self, user_data: schemas.RegistrateUser) -> None:
+        """
+        Method add user to database
+
+        Args:
+            user_data: pydantic model with new user data
+
+        Returns:
+            pydantic model with add user data
+
+        """
+        user_role = await self.__get_role(role=user_data.role)
+        hashed_password = PasswordManager(password=user_data.password).hash_password()
+        stmt = insert(User).returning(User).values(role_id=user_role.id, password=hashed_password,
+                                                   **user_data.dict(exclude={"role", "password", "confirm_password"}))
+        await self.__session.execute(stmt)
+        await self.__session.commit()

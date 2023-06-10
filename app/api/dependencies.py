@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.handlers import AuthenticationHandlers
 from app.api.services import AuthenticationStorage
-from app.database.db import use_session
+from app.database.postgres import use_session
 
 
 def authentication_storage(session: AsyncSession = Depends(use_session)) -> AuthenticationStorage:

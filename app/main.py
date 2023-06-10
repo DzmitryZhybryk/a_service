@@ -8,8 +8,7 @@ from hypercorn.config import Config
 
 from app.api.routes import router as auth_router
 from app.api.services import AuthenticationStorage
-from app.database.db import engine
-from app.database.db import use_session
+from app.database.postgres import engine, use_session
 from app.utils.funcs import get_app_metadata
 
 app_metadata = asyncio.run(get_app_metadata())
@@ -41,6 +40,12 @@ async def on_startup() -> None:
     async for session in use_session():
         authentication_storage_handle = AuthenticationStorage(session=session)
         await authentication_storage_handle.create_init_database_data()
+    from app.database.redis import redis_db, test
+    for connect in test.connect():
+        await connect.set(name="one", value="two")
+        some = await connect.get(name="one")
+    await redis_db.set(name="test", value="some value")
+    data = await redis_db.get(name="test")
 
 
 @app.on_event("shutdown")

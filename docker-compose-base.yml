@@ -30,5 +30,20 @@ services:
       - postgres-db:/var/lib/postgresql/data
     tty: true
 
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_cache:/data
+    environment:
+      #      - REDIS_PASSWORD=3050132596
+      - REDIS_IO_THREADS_DO_READS=true
+      - REDIS_IO_THREADS=4
+    command: redis-server --requirepass 3050132596
+
 volumes:
   postgres-db:
+  redis_cache:
+    driver: local

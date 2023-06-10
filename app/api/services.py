@@ -137,3 +137,4 @@ class AuthenticationStorage:
         stmt = update(self.__user_mode).where(User.email == user_email).values(is_user_activate=True)
         await self.__session.execute(stmt)
         await self.__session.commit()
+

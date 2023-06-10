@@ -15,6 +15,14 @@ The following environment variables are available to control the operation of th
 - `POSTGRES_HOSTNAME` - Postgres host name;
 - `POSTGRES_ECHO` - Flag for database logs, default=False;
 
+- `REDIS_HOST`
+- `REDIS_USERNAME`
+- `REDIS_PASSWORD`
+- `REDIS_HASH_KEY`
+- `DIGESTMOD`
+- `REDIS_HASH_KEY`
+- `REDIS_TOKEN_DB`
+
 - `USER_ROLES` - Basic user roles that will be created during application startup;
 
 - `USERNAME` - Init user username, default=admin;
@@ -49,6 +57,14 @@ POSTGRES_DB=authentication_database
 POSTGRES_HOST=postgres
 POSTGRES_HOSTNAME=127.0.0.1
 POSTGRES_ECHO=True
+
+REDIS_HOST=redis://redis/
+REDIS_USERNAME=dzmitry_zhybryk
+REDIS_PASSWORD=3050132596
+REDIS_HASH_KEY=somedificultkey
+DIGESTMOD=sha256
+REDIS_INITIALIZATION_DB=0
+REDIS_TOKEN_DB=1
 
 USER_ROLES="admin,base_user,moderator"
 

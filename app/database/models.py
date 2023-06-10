@@ -5,7 +5,7 @@ from sqlalchemy import String, DateTime, ForeignKey, CheckConstraint, Date, Bool
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.config import base_config
-from app.database.db import Base
+from app.database.postgres import Base
 from app.utils.funcs import get_current_time_with_utc
 
 

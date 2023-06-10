@@ -15,6 +15,12 @@ class RoleEnum(str, Enum):
     base_user = "base_user"
 
 
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "nearer"
+
+
 class RegistrateUser(BaseModel):
     username: str
     password: str

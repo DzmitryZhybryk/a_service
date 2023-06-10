@@ -9,10 +9,22 @@ BASE_DIR = Path(__file__).parent.parent
 RunModeType = Literal['dev', 'test', 'prod']
 
 
-class BaseConfig(BaseSettings):
-    user_roles: str | tuple
+class DatabaseConfig(BaseSettings):
     database_url: str
     postgres_echo: bool = False
+    redis_host: str
+    redis_username: str
+    redis_password: str
+    redis_hash_key: str
+    digestmod: str
+    redis_token_db: int
+
+    class Config:
+        env_file = BASE_DIR / ".env"
+
+
+class BaseConfig(BaseSettings):
+    user_roles: str | tuple
     base_dir: Path = BASE_DIR
     pyproject_toml_path: Path = BASE_DIR / "pyproject.toml"
     confirm_registration_url: str = "http://127.0.0.1:8001/api/v1/registrate/activate/"
@@ -70,3 +82,4 @@ base_config = BaseConfig()
 email_config = EmailConfig()
 init_config = InitUserData()
 secret_config = SecretConfig()
+database_config = DatabaseConfig()

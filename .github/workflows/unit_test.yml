@@ -14,5 +14,5 @@ jobs:
       - name: make .env file and run unit-tests inside docker
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
-          docker build -f .\Dockerfile_unittests . -t auth_unittests
+          docker build -f Dockerfile_unittests . -t auth_unittests
           docker run --env-file .env auth_unittests

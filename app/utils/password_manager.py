@@ -10,7 +10,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class PasswordManager:
     """
-    Класс для работы с паролями
+    Class works with passwords
+
+    Args:
+        password: password for work
+
     """
 
     def __init__(self, password: str):
@@ -18,23 +22,23 @@ class PasswordManager:
 
     def hash_password(self) -> str:
         """
-        Метод для хеширования пароля
+        Method hashes passwords
 
         Returns:
-            Хешированный пароль
+            hashed password
 
         """
         return pwd_context.hash(self.__password)
 
     def verify_password(self, hashed_password: str) -> bool:
         """
-        Метод для проверки пароля
+        Method verifications passwords
 
         Args:
-            hashed_password: Хешированный пароль
+            hashed_password: hashed password
 
         Returns:
-            True - если пароль верный, False - если пароль не верный
+            True - if the password is correct, False - if not
 
         """
         try:

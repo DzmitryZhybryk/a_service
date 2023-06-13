@@ -1,3 +1,4 @@
+"""Module for storage config classes"""
 from pathlib import Path
 from typing import Literal
 
@@ -8,12 +9,25 @@ BASE_DIR = Path(__file__).parent.parent
 RunModeType = Literal['dev', 'test', 'prod']
 
 
-class BaseConfig(BaseSettings):
-    user_roles: str | tuple
+class DatabaseConfig(BaseSettings):
     database_url: str
     postgres_echo: bool = False
+    redis_host: str
+    redis_username: str
+    redis_password: str
+    redis_hash_key: str
+    digestmod: str
+    redis_token_db: int
+
+    class Config:
+        env_file = BASE_DIR / ".env"
+
+
+class BaseConfig(BaseSettings):
+    user_roles: str | tuple
     base_dir: Path = BASE_DIR
     pyproject_toml_path: Path = BASE_DIR / "pyproject.toml"
+    confirm_registration_url: str = "http://127.0.0.1:8001/api/v1/registrate/activate/"
 
     class Config:
         env_file = BASE_DIR / ".env"
@@ -35,11 +49,15 @@ class InitUserData(BaseSettings):
         env_file = BASE_DIR / ".env"
 
 
-class InitConfig(InitUserData):
-    pass
+class SecretConfig(BaseSettings):
+    secret_key: str
+    salt: str
+    jwt_algorithm: str
+    access_token_expire: int  # minutes
+    refresh_token_expire: int  # days
 
     class Config:
-        env_file = BASE_DIR / ".env"
+        env_file = BASE_DIR / '.env'
 
 
 class LoggingConfig(BaseSettings):
@@ -49,6 +67,19 @@ class LoggingConfig(BaseSettings):
     sentry_activate: bool = False
 
 
+class EmailConfig(BaseSettings):
+    smtp_server_host: str = "smtp.gmail.com"
+    smtp_server_port: int = 587
+    work_email: str
+    work_email_password: str
+
+    class Config:
+        env_file = BASE_DIR / ".env"
+
+
 logging_config = LoggingConfig()
 base_config = BaseConfig()
-init_config = InitConfig()
+email_config = EmailConfig()
+init_config = InitUserData()
+secret_config = SecretConfig()
+database_config = DatabaseConfig()

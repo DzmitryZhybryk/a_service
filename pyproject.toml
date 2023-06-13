@@ -18,6 +18,11 @@ dependencies = [
     "pydantic[dotenv]>=1.10.8",
     "aiofiles>=23.1.0",
     "alembic>=1.11.1",
+    "email-validator>=2.0.0.post2",
+    "itsdangerous>=2.1.2",
+    "python-jose>=3.3.0",
+    "cashews>=6.2.0",
+    "redis>=4.5.5",
 ]
 
 requires-python = ">=3.10"

@@ -13,7 +13,15 @@ The following environment variables are available to control the operation of th
 - `POSTGRES_DB` - Postgres database name;
 - `POSTGRES_HOST` - Postgres host;
 - `POSTGRES_HOSTNAME` - Postgres host name;
-- `POSTGRES_ECHO` - Flag for database logs;
+- `POSTGRES_ECHO` - Flag for database logs, default=False;
+
+- `REDIS_HOST`
+- `REDIS_USERNAME`
+- `REDIS_PASSWORD`
+- `REDIS_HASH_KEY`
+- `DIGESTMOD`
+- `REDIS_HASH_KEY`
+- `REDIS_TOKEN_DB`
 
 - `USER_ROLES` - Basic user roles that will be created during application startup;
 
@@ -23,13 +31,20 @@ The following environment variables are available to control the operation of th
 - `EMAIL` - Init user email, default=admin@gmail.com;
 - `ROLE` - Init user role, default=admin;
 
-- `SECRET_KEY` - Secret key for generate JWT access tokens;
+- `SECRET_KEY` - Secret key for generate JWT access tokens and other secret information;
+- `SALT` - Salt for generate secret information;
 - `JWT_ALGORITHM` - Encryption algorithm;
-- `ACCESS_TOKEN_EXPIRE` - Time to live JWT access token;
+- `ACCESS_TOKEN_EXPIRE` - Time to live JWT access token in minutes;
+- `REFRESH_TOKEN_EXPIRE` - Time to live JWT refresh token in days;
 
-- `LOGGING_DIR` - Logs dir. Default = BASEDIR;
+- `LOGGING_DIR` - Logs dir, default=root dir;
 - `API_KEY` - Key for external API;
 - `LOGURU_LEVEL` - Logging level;
+
+- `SMTP_SERVER_HOST` - host for send email, default=smtp.gmail.com;
+- `WORK_EMAIL` - mail to send messages;
+- `EMAIL_PASSWORD` - work email password;
+- `SMTP_SERVER_PORT` - default=587
 
 .env file example:
 
@@ -43,16 +58,29 @@ POSTGRES_HOST=postgres
 POSTGRES_HOSTNAME=127.0.0.1
 POSTGRES_ECHO=True
 
+REDIS_HOST=redis://redis/
+REDIS_USERNAME=dzmitry_zhybryk
+REDIS_PASSWORD=3050132596
+REDIS_HASH_KEY=somedificultkey
+DIGESTMOD=sha256
+REDIS_INITIALIZATION_DB=0
+REDIS_TOKEN_DB=1
+
 USER_ROLES="admin,base_user,moderator"
 
 PASSWORD="admin"
 
 SECRET_KEY=somedificultkey
+SALT=salt
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE=30
+REFRESH_TOKEN_EXPIRE=30
 
 API_KEY=somedificultkey
 LOGURU_LEVEL=INFO
+
+WORK_EMAIL=mr.zhybryk@gmail.com
+EMAIL_PASSWORD=gjovrgkjcxurtztj
 ```
 
 ## Before start up

@@ -8,8 +8,7 @@ from hypercorn.config import Config
 
 from app.api.routes import router as auth_router
 from app.api.services import AuthenticationStorage
-from app.database.db import engine
-from app.database.db import use_session
+from app.database.postgres import engine, use_session
 from app.utils.funcs import get_app_metadata
 
 app_metadata = asyncio.run(get_app_metadata())

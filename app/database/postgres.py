@@ -2,10 +2,10 @@
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
-from app.config import base_config
+from app.config import database_config
 from typing import AsyncGenerator
 
-engine = create_async_engine(base_config.database_url, echo=base_config.postgres_echo)
+engine = create_async_engine(database_config.database_url, echo=database_config.postgres_echo)
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
@@ -15,7 +15,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 async def use_session() -> AsyncGenerator[AsyncSession, None]:
     """
-    Function for create database session
+    Function creates database session
 
     Returns:
         database session

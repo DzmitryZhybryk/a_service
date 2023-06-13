@@ -8,11 +8,20 @@ services:
     command: pdm run test
     depends_on:
       - postgres
+      - redis
 
   postgres:
     extends:
       file: docker-compose-base.yml
       service: postgres
 
+  redis:
+    restart: always
+    extends:
+      file: docker-compose-base.yml
+      service: redis
+
 volumes:
   postgres-db:
+  redis_cache:
+    driver: local

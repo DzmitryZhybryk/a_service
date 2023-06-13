@@ -43,6 +43,11 @@ services:
       - REDIS_IO_THREADS=4
     command: redis-server --requirepass 3050132596
 
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    ports:
+      - 15672:15672
+
 volumes:
   postgres-db:
   redis_cache:

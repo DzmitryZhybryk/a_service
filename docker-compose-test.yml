@@ -21,6 +21,12 @@ services:
       file: docker-compose-base.yml
       service: redis
 
+  rabbitmq:
+    restart: always
+    extends:
+      file: docker-compose-base.yml
+      service: rabbitmq
+
 volumes:
   postgres-db:
   redis_cache:

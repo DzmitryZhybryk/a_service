@@ -40,12 +40,6 @@ async def on_startup() -> None:
     async for session in use_session():
         authentication_storage_handle = AuthenticationStorage(session=session)
         await authentication_storage_handle.create_init_database_data()
-    from app.database.redis import redis_db, test
-    for connect in test.connect():
-        await connect.set(name="one", value="two")
-        some = await connect.get(name="one")
-    await redis_db.set(name="test", value="some value")
-    data = await redis_db.get(name="test")
 
 
 @app.on_event("shutdown")

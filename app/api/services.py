@@ -2,6 +2,7 @@
 from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
+from sqlalchemy.orm import selectinload
 
 from app.api import schemas
 from app.config import base_config, init_config
@@ -11,6 +12,8 @@ from app.utils.funcs import make_confirm_registration_url
 from app.utils.mail import mail_worker
 from app.utils.password_manager import PasswordManager
 from app.utils.serializer import serializer
+from app.database.redis import refresh_token_storage
+from app.utils.oauth2 import JWTManager
 
 
 class AuthenticationStorage:
@@ -27,6 +30,7 @@ class AuthenticationStorage:
         self.__session = session
         self.__role_model = Role
         self.__user_mode = User
+        self.__jwt_worker = JWTManager()
 
     async def __is_role_exist(self) -> bool:
         """
@@ -123,7 +127,14 @@ class AuthenticationStorage:
                                subject="Confirm registration")
         await self.__session.commit()
 
-    async def activate_person_in_database(self, email: str) -> None:
+    def __make_tokens(self, user: User) -> tuple[str, str]:
+        access_token = self.__jwt_worker.create_access_token(role=user.role.role,
+                                                             username=user.username,
+                                                             user_id=user.id)
+        refresh_token = self.__jwt_worker.create_refresh_token()
+        return access_token, refresh_token
+
+    async def activate_person_in_database(self, email: str) -> schemas.ResponseToken:
         """
         Method gets the user's email and activate that user in the database
 
@@ -131,10 +142,18 @@ class AuthenticationStorage:
             email: user email for activation
 
         Returns:
+            pydantic model with tokens and tokens type
 
         """
         user_email = serializer.deserialize_secret_data(secret_data=email)
-        stmt = update(self.__user_mode).where(User.email == user_email).values(is_user_activate=True)
-        await self.__session.execute(stmt)
+        stmt = update(self.__user_mode).returning(User).where(User.email == user_email).values(
+            is_user_activate=True).options(selectinload(User.role))
+        response = await self.__session.execute(stmt)
+        activated_user = response.scalar_one()
         await self.__session.commit()
-
+        access_token, refresh_token = self.__make_tokens(user=activated_user)
+        await refresh_token_storage.hmset_data(name=refresh_token,
+                                               mapping={"username": activated_user.username, "id": activated_user.id,
+                                                        "role": activated_user.role.role})
+        response_schema = schemas.ResponseToken(access_token=access_token, refresh_token=refresh_token)
+        return response_schema

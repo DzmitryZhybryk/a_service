@@ -43,4 +43,4 @@ class JWTManager:
         return encode_refresh_jwt
 
 
-jwt_worker = JWTManager()
+# jwt_worker = JWTManager()

@@ -26,7 +26,7 @@ class AuthenticationHandlers:
         """
         await self.__services.add_user_to_db(user_data=user_data)
 
-    async def confirm_registration(self, email: str) -> None:
+    async def confirm_registration(self, email: str) -> schemas.ResponseToken:
         """
         Method confirms user registration
 
@@ -36,4 +36,5 @@ class AuthenticationHandlers:
         Returns:
 
         """
-        await self.__services.activate_person_in_database(email=email)
+        tokens = await self.__services.activate_person_in_database(email=email)
+        return tokens

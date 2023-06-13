@@ -43,7 +43,7 @@ The following environment variables are available to control the operation of th
 
 - `SMTP_SERVER_HOST` - host for send email, default=smtp.gmail.com;
 - `WORK_EMAIL` - mail to send messages;
-- `EMAIL_PASSWORD` - work email password;
+- `WORK_EMAIL_PASSWORD` - work email password;
 - `SMTP_SERVER_PORT` - default=587
 
 .env file example:
@@ -80,7 +80,7 @@ API_KEY=somedificultkey
 LOGURU_LEVEL=INFO
 
 WORK_EMAIL=mr.zhybryk@gmail.com
-EMAIL_PASSWORD=gjovrgkjcxurtztj
+WORK_EMAIL_PASSWORD=gjovrgkjcxurtztj
 ```
 
 ## Before start up

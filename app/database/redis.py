@@ -1,6 +1,6 @@
 import redis.asyncio as redis
 
-from app.config import database_config
+from app.config import config
 from app.utils import decorators
 
 
@@ -30,6 +30,17 @@ class RedisWorker:
             response = await connect.hmgetall(name=name)
             return response
 
+    @decorators.redis_exceptions_handler
+    async def set_data(self, name: str, value: str) -> None:
+        async for connect in self.connect():
+            await connect.set(name=name, value=value)
 
-refresh_token_storage = RedisWorker(host=database_config.redis_host, password=database_config.redis_password,
-                                    db=database_config.redis_token_db)
+    @decorators.redis_exceptions_handler
+    async def get_data(self, name: str) -> str:
+        async for connect in self.connect():
+            response = await connect.get(name=name)
+            return response
+
+
+redis_storage = RedisWorker(host=config.database.redis_host, password=config.database.redis_password,
+                            db=config.database.redis_database)

@@ -1,9 +1,11 @@
 """Module for storage utils funcs"""
+import random
+import string
 from datetime import datetime, timezone
 from string import Template
 
 from app.api import schemas
-from app.config import base_config, logging_config
+from app.config import config
 from app.utils.file_worker import TomlWorker
 
 
@@ -34,13 +36,13 @@ async def get_app_metadata() -> schemas.AppInfo:
         pydantic model with all app information
 
     """
-    toml_worker = TomlWorker(base_config.pyproject_toml_path)
+    toml_worker = TomlWorker(config.init.pyproject_toml_path)
     data_from_pyproject_toml = await toml_worker.read_file()
     app_metadata = __get_metadata_from_dict(project_data=data_from_pyproject_toml)
     response_schema = schemas.AppInfo(name=app_metadata.name, version=app_metadata.version,
                                       description=app_metadata.description,
-                                      environment=logging_config.environment, run_mode=logging_config.run_mode,
-                                      logs_dir=logging_config.logging_dir)
+                                      environment=config.logging.environment, run_mode=config.logging.run_mode,
+                                      logs_dir=config.logging.logging_dir)
     return response_schema
 
 
@@ -55,7 +57,7 @@ def get_current_time_with_utc() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def __make_rout_with_path(url: str, path_param: str) -> str:
+def __make_rout_with_path(url: str, template: Template, **args) -> str:
     """
     Function concatenate rout url and path param
 
@@ -67,22 +69,55 @@ def __make_rout_with_path(url: str, path_param: str) -> str:
         concatenated url and path param
 
     """
-    template = Template("$base_url$email/")
-    result = template.substitute(base_url=url, email=path_param)
+    template = template
+    result = template.substitute(base_url=url, **args)
     return result
 
 
-def make_confirm_registration_url(user_email: str) -> str:
+def make_confirm_registration_key(_range: int) -> str:
+    """
+    Function generate random string
+
+    Args:
+        _range: len string for generate
+
+    Returns:
+        generated string
+
+    """
+    symbols = f"{string.ascii_lowercase}{string.ascii_uppercase}{string.digits}"
+    rand_code = ''.join(random.choice(symbols) for _ in range(_range))
+    return rand_code
+
+
+def make_confirm_registration_url(key: str) -> str:
     """
     Function makes url for confirm user registration
 
     Args:
-        user_email: registered user email
+        key: confirm registration key. With this key you can find user id in redis database
 
     Returns:
         url for confirm new user registration
 
     """
-    base_url = base_config.confirm_registration_url
-    result_url = __make_rout_with_path(url=base_url, path_param=user_email)
+    template = Template("$base_url$key/")
+    base_url = config.init.confirm_registration_url
+    result_url = __make_rout_with_path(url=base_url, template=template, key=key)
     return result_url
+
+
+def make_confirm_registration_message(username: str, confirm_registration_url: str) -> str:
+    """
+    Function makes an email message that will be sent to the user for confirm registration
+
+    Args:
+        username: user username
+        confirm_registration_url: url for confirm registration
+
+    Returns:
+        confirm registration message
+
+    """
+    message = f"Welcome {username}! Thanks for registration! Confirm registration link: {confirm_registration_url}"
+    return message

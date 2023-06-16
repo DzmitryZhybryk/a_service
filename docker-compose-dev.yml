@@ -2,39 +2,50 @@ version: '3.9'
 services:
 
   authentication:
-    build:
-      context: .
-      args:
-        - INSTALL_COMMAND=i-dev
     extends:
       file: docker-compose-base.yml
       service: authentication
-    command: pdm run start
-    restart: always
-    depends_on:
-      - postgres
-      - redis
-
+    command: pdm run dev
+    restart: on-failure
+    networks:
+      - dev-network
 
   postgres:
-    restart: always
     extends:
       file: docker-compose-base.yml
       service: postgres
+    restart: on-failure
+    networks:
+      - dev-network
+
+  api-celery:
+    extends:
+      file: docker-compose-base.yml
+      service: api-celery
+    restart: on-failure
+    networks:
+      - dev-network
 
   redis:
-    restart: always
     extends:
       file: docker-compose-base.yml
       service: redis
+    restart: on-failure
+    networks:
+      - dev-network
 
   rabbitmq:
-    restart: always
     extends:
       file: docker-compose-base.yml
       service: rabbitmq
+    restart: on-failure
+    networks:
+      - dev-network
 
 volumes:
   postgres-db:
-  redis_cache:
+  redis-cache:
     driver: local
+networks:
+  dev-network:
+    name: dev-network

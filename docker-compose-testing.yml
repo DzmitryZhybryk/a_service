@@ -6,28 +6,46 @@ services:
       file: docker-compose-base.yml
       service: authentication
     command: pdm run test
-    depends_on:
-      - postgres
-      - redis
+    restart: always
+    networks:
+      - test-network
 
   postgres:
     extends:
       file: docker-compose-base.yml
       service: postgres
+    restart: always
+    networks:
+      - test-network
+
+  api-celery:
+    extends:
+      file: docker-compose-base.yml
+      service: api-celery
+    restart: always
+    networks:
+      - test-network
 
   redis:
-    restart: always
     extends:
       file: docker-compose-base.yml
       service: redis
+    restart: always
+    networks:
+      - test-network
 
   rabbitmq:
-    restart: always
     extends:
       file: docker-compose-base.yml
       service: rabbitmq
+    restart: always
+    networks:
+      - test-network
 
 volumes:
   postgres-db:
-  redis_cache:
+  redis-cache:
     driver: local
+networks:
+  test-network:
+    name: test-network

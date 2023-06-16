@@ -21,7 +21,9 @@ The following environment variables are available to control the operation of th
 - `REDIS_HASH_KEY`
 - `DIGESTMOD`
 - `REDIS_HASH_KEY`
-- `REDIS_TOKEN_DB`
+- `REDIS_DATABASE`
+- `REDIS_IO_THREADS` - default=4
+- `REDIS_IO_THREADS_DO_READS` - default=True
 
 - `USER_ROLES` - Basic user roles that will be created during application startup;
 
@@ -39,12 +41,18 @@ The following environment variables are available to control the operation of th
 
 - `LOGGING_DIR` - Logs dir, default=root dir;
 - `API_KEY` - Key for external API;
-- `LOGURU_LEVEL` - Logging level;
+- `LOGURU_LEVEL` - Logging level, default=INFO;
 
 - `SMTP_SERVER_HOST` - host for send email, default=smtp.gmail.com;
 - `WORK_EMAIL` - mail to send messages;
 - `WORK_EMAIL_PASSWORD` - work email password;
 - `SMTP_SERVER_PORT` - default=587
+
+- `RABBITMQ_DEFAULT_USER` - default=admin
+- `RABBITMQ_DEFAULT_PASS` - default=admin
+- `RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS`
+- `BROKER_CONNECTION_RETRY_ON_STARTUP`
+- `RABBITMQ_BACKEND` - default=rpc://
 
 .env file example:
 
@@ -63,8 +71,9 @@ REDIS_USERNAME=dzmitry_zhybryk
 REDIS_PASSWORD=3050132596
 REDIS_HASH_KEY=somedificultkey
 DIGESTMOD=sha256
-REDIS_INITIALIZATION_DB=0
-REDIS_TOKEN_DB=1
+REDIS_DATABASE=0
+REDIS_IO_THREADS=4
+REDIS_IO_THREADS_DO_READS=true
 
 USER_ROLES="admin,base_user,moderator"
 
@@ -77,10 +86,12 @@ ACCESS_TOKEN_EXPIRE=30
 REFRESH_TOKEN_EXPIRE=30
 
 API_KEY=somedificultkey
-LOGURU_LEVEL=INFO
 
 WORK_EMAIL=mr.zhybryk@gmail.com
 WORK_EMAIL_PASSWORD=gjovrgkjcxurtztj
+
+RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+BROKER_CONNECTION_RETRY_ON_STARTUP=True
 ```
 
 ## Before start up

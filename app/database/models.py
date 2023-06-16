@@ -4,7 +4,7 @@ import datetime
 from sqlalchemy import String, DateTime, ForeignKey, CheckConstraint, Date, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.config import base_config
+from app.config import config
 from app.database.postgres import Base
 from app.utils.funcs import get_current_time_with_utc
 
@@ -20,7 +20,7 @@ class Role(Base):
     """Database model, describes the table of roles in the database"""
     __tablename__ = "roles"
     __table_args__ = (
-        CheckConstraint(f"role in {base_config.user_roles}"),
+        CheckConstraint(f"role in {config.init.user_roles}"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)

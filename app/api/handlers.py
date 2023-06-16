@@ -1,4 +1,5 @@
 """Module for storage AuthenticationHandler class"""
+
 from app.api import schemas
 from app.api.services import AuthenticationStorage
 
@@ -16,7 +17,7 @@ class AuthenticationHandlers:
         """Inits AuthenticationHandlers class"""
         self.__services = storage
 
-    async def registrate_user(self, user_data: schemas.RegistrateUser) -> None:
+    async def registrate_user(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
         """
         Method registrate new user
 
@@ -24,17 +25,18 @@ class AuthenticationHandlers:
             user_data: pydantic model with new user data
 
         """
-        await self.__services.add_user_to_db(user_data=user_data)
+        new_user = await self.__services.add_user_to_db(user_data=user_data)
+        return new_user
 
-    async def confirm_registration(self, email: str) -> schemas.ResponseToken:
+    async def confirm_registration(self, activate_key: str) -> schemas.ResponseToken:
         """
         Method confirms user registration
 
         Args:
-            email: user email address
+            activate_key: key for activate new user
 
         Returns:
 
         """
-        tokens = await self.__services.activate_person_in_database(email=email)
+        tokens = await self.__services.activate_person_in_database(activate_key=activate_key)
         return tokens

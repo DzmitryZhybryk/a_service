@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.handlers import AuthenticationHandlers
 from app.api.services import AuthenticationStorage
 from app.database.postgres import use_session
+from app.database.redis import redis_storage
 
 
 def authentication_storage(session: AsyncSession = Depends(use_session)) -> AuthenticationStorage:
@@ -18,7 +19,7 @@ def authentication_storage(session: AsyncSession = Depends(use_session)) -> Auth
         an instance of the AuthenticationStorage class
 
     """
-    return AuthenticationStorage(session=session)
+    return AuthenticationStorage(session=session, cache_database=redis_storage)
 
 
 def authentication_handler(storage: AuthenticationStorage = Depends(authentication_storage)) -> AuthenticationHandlers:

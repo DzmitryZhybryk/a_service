@@ -9,6 +9,7 @@ from hypercorn.config import Config
 from app.api.routes import router as auth_router
 from app.api.services import AuthenticationStorage
 from app.database.postgres import engine, use_session
+from app.database.redis import redis_storage
 from app.utils.funcs import get_app_metadata
 
 app_metadata = asyncio.run(get_app_metadata())
@@ -38,33 +39,13 @@ async def on_startup() -> None:
     # async with engine.begin() as conn:
     #     await conn.run_sync(Base.metadata.create_all)
     async for session in use_session():
-        authentication_storage_handle = AuthenticationStorage(session=session)
+        authentication_storage_handle = AuthenticationStorage(session=session, cache_database=redis_storage)
         await authentication_storage_handle.create_init_database_data()
 
 
 @app.on_event("shutdown")
 async def on_shutdown() -> None:
     await engine.dispose()
-
-
-# @app.exception_handler(RequestValidationError)
-# def validation_exception_handler(request: Request, exc: RequestValidationError):
-#     """Кастомное исключение для вывода более информативного ответа 422 ошибки"""
-#     return JSONResponse(
-#         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-#         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
-#     )
-
-
-# @app.middleware('http')
-# async def log_exception(request: Request, call_next):
-#     """Функция для логирования необработанных ошибок"""
-#     try:
-#         return await call_next(request)
-#     except Exception as err:
-#         if logging.sentry_activate:
-#             sentry_sdk.capture_exception(error=err)
-#         raise err
 
 
 def main() -> None:

@@ -2,11 +2,13 @@
 import datetime
 
 from sqlalchemy import String, DateTime, ForeignKey, CheckConstraint, Date, Boolean
+from sqlalchemy import select, insert
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.config import base_config
-from app.database.postgres import Base
+from fastapi import HTTPException, status
+from app.config import config
+from app.database.postgres import Base, use_session
 from app.utils.funcs import get_current_time_with_utc
+from app.utils.password_manager import PasswordManager
 
 
 class DateFieldMixin:
@@ -20,7 +22,7 @@ class Role(Base):
     """Database model, describes the table of roles in the database"""
     __tablename__ = "roles"
     __table_args__ = (
-        CheckConstraint(f"role in {base_config.user_roles}"),
+        CheckConstraint(f"role in {config.init.user_roles}"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -35,6 +37,29 @@ class Role(Base):
 
     def __repr__(self):
         return str(self)
+
+    async def __is_role_exist(self) -> bool:
+        """
+        Method checks if the roles exist in the database
+
+        Returns:
+            true if there are roles in database table, false if not
+
+        """
+        stmt = select(self.__class__)
+        async for session in use_session():
+            role = await session.scalar(stmt)
+            return bool(role)
+
+    async def create_init_roles(self) -> None:
+        """Method adds init roles to the database"""
+        if not await self.__is_role_exist():
+            user_roles = config.init.user_roles
+            async for session in use_session():
+                for role in user_roles:
+                    stmt = insert(Role).values(role=role)
+                    await session.execute(statement=stmt)
+                    await session.commit()
 
 
 class User(Base, DateFieldMixin):
@@ -63,3 +88,49 @@ class User(Base, DateFieldMixin):
 
     def __repr__(self):
         return str(self)
+
+    async def __is_user_exist(self) -> bool:
+        """
+        Method checks if the users exist in the database
+
+        Returns:
+            true if there are users in database table, false if not
+
+        """
+        stmt = select(self.__class__)
+        async for session in use_session():
+            user = await session.scalar(stmt)
+            return bool(user)
+
+    @staticmethod
+    async def __get_role(role: str, raise_not_found=False) -> Role | None:
+        """
+        Method gets user's role and return this role from the database
+
+        Args:
+            role: role to select from database
+            raise_not_found: if False - return None if user is not found in the database, return exception if True
+
+        Returns:
+            role from database
+
+        """
+        stmt = select(Role).where(Role.role == role)
+        async for session in use_session():
+            result = await session.scalar(stmt)
+            if not result and raise_not_found:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Role {role} not found")
+
+            return result
+
+    async def creat_init_user(self) -> None:
+        """Method insert init user to database"""
+        if not await self.__is_user_exist():
+            init_user_role = await self.__get_role(role=config.init.role, raise_not_found=True)
+            hashed_password = PasswordManager(password=config.init.password).hash_password()
+            stmt = insert(self.__class__).values(username=config.init.username, password=hashed_password,
+                                                 nickname=config.init.nickname, email=config.init.email,
+                                                 role_id=init_user_role.id, is_user_activate=True)
+            async for session in use_session():
+                await session.execute(statement=stmt)
+                await session.commit()

@@ -18,13 +18,22 @@ async def index_page():
     return application_metadata
 
 
-@router.post("/registrate/", status_code=status.HTTP_202_ACCEPTED, responses=schemas.RegistrateUserResponse().detail,
-             tags=["Authentication"])
+@router.post("/registrate/", response_model=schemas.RegistrateResponse,
+             responses=schemas.RegistrateUserResponse().detail, tags=["Authentication"])
 async def registrate_user(user_data: schemas.RegistrateUser, handler: BaseHandlerDep):
-    await handler.registrate_user(user_data=user_data)
+    new_user = await handler.registrate_user(user_data=user_data)
+    return new_user
 
 
-@router.get("/registrate/activate/{email}/", response_model=schemas.ResponseToken, tags=["Authentication"])
-async def confirm_registration(email: str, handler: BaseHandlerDep):
-    tokens = await handler.confirm_registration(email=email)
+@router.get("/registrate/activate/", status_code=status.HTTP_202_ACCEPTED, tags=["Authentication"])
+def confirm_registration(email: str, username: str, confirm_key: str, handler: BaseHandlerDep):
+    handler.confirm_registration(email=email, username=username, confirm_key=confirm_key)
+    return {
+        "data": "The later has been sent",
+    }
+
+
+@router.get("/registrate/activate/{key}/", response_model=schemas.ResponseToken, tags=["Authentication"])
+async def activate_user(key: str, handler: BaseHandlerDep):
+    tokens = await handler.activate_user(activate_key=key)
     return tokens

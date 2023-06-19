@@ -23,6 +23,7 @@ dependencies = [
     "python-jose>=3.3.0",
     "cashews>=6.2.0",
     "redis>=4.5.5",
+    "celery>=5.3.0",
 ]
 
 requires-python = ">=3.10"
@@ -33,7 +34,7 @@ license = {text = "MIT"}
 pre_start = { composite = ["pdm run alembic upgrade head"]}
 i-prod = "pdm install --prod"
 i-dev = "pdm install --dev -G test"
-start = "pdm run hypercorn --bind 0.0.0.0:8001 --reload --access-logfile - app.main:app"
+dev = "pdm run hypercorn --bind 0.0.0.0:8001 --reload --access-logfile - app.main:app"
 test = "pdm run pytest"
 
 [tool.pdm.dev-dependencies]

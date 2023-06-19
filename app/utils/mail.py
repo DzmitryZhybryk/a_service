@@ -1,43 +1,48 @@
+"""Module for storage classes that work with e-mail"""
 import smtplib
 from abc import ABC, abstractmethod
 from email.mime.text import MIMEText
 from socket import gaierror
+
+from email_validator import validate_email
+from email_validator.exceptions_types import EmailSyntaxError
 from fastapi import HTTPException, status
 
-from app.config import email_config
+from app.config import config
 
 
-class EMail(ABC):
+class MailSMTP(ABC):
     """
-    Abstract class, implements contracts for child classes
+    An abstract class that implements an interface for child classes
+
+    Methods:
+        send_email: method send email to other people
 
     Args:
-        work_email: email from which messages are sent
-        work_email_password: password for work email
-        smtp_server_host: outgoing email server host
-        smtp_server_port: outgoing email server port
+        work_email: mail from which messages are sent
+        work_email_password: work email password
+        smtp_server_host:
 
     """
 
     def __init__(self, work_email: str, work_email_password: str, smtp_server_host: str, smtp_server_port: int):
-        """Inits EMail class"""
         self._work_email = work_email
         self._work_email_password = work_email_password
         self._smtp_server_host = smtp_server_host
         self._smtp_server_port = smtp_server_port
 
     @abstractmethod
-    def send_email(self, recipient: str, send_data: str, subject: str):
+    def send_email(self, to: str, message: str, subject: str):
         pass
 
 
-class GmailWorker(EMail):
+class GmailSMTP(MailSMTP):
 
     def __init__(self, work_email: str, work_email_password: str, smtp_server_host: str, smtp_server_port: int):
         """Inits GmailWorker class"""
         super().__init__(work_email, work_email_password, smtp_server_host, smtp_server_port)
 
-    def __send_email_config(self, msg: MIMEText, recipient: str, subject: str) -> MIMEText:
+    def __email_config(self, msg: MIMEText, recipient: str, subject: str) -> MIMEText:
         """
         Method makes send email config
 
@@ -57,13 +62,13 @@ class GmailWorker(EMail):
         msg['Return-Path'] = self._work_email
         return msg
 
-    def send_email(self, recipient: str, send_data: str, subject: str) -> None:
+    def send_email(self, to: str, message: str, subject: str) -> None:
         """
-        Method sends email
+        Override method sends email
 
         Args:
-            recipient: recipient's email
-            send_data: the data you want to send
+            to: recipient's email
+            message: the data you want to send
             subject: email header
 
         """
@@ -72,14 +77,30 @@ class GmailWorker(EMail):
             server.starttls()
             server.login(self._work_email, self._work_email_password)
             # msg = MIMEText(self._read_template(), "html")
-            msg = MIMEText(send_data)
-            msg = self.__send_email_config(msg=msg, recipient=recipient, subject=subject)
-            server.sendmail(self._work_email, recipient, msg.as_string())
-        except (gaierror, smtplib.SMTPAuthenticationError):
+            msg = MIMEText(message)
+            msg = self.__email_config(msg=msg, recipient=to, subject=subject)
+            server.sendmail(self._work_email, to, msg.as_string())
+        except (gaierror, smtplib.SMTPAuthenticationError, smtplib.SMTPRecipientsRefused):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Problems sending email")
 
 
-mail_worker: EMail = GmailWorker(work_email=email_config.work_email,
-                                 work_email_password=email_config.work_email_password,
-                                 smtp_server_host=email_config.smtp_server_host,
-                                 smtp_server_port=email_config.smtp_server_port)
+class Mail:
+    """
+
+    """
+
+    def __init__(self, worker: MailSMTP):
+        self.__worker = worker
+
+    def send_email(self, to: str, message: str, subject: str):
+        try:
+            validate_email(to)
+        except EmailSyntaxError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email is not valid")
+
+        self.__worker.send_email(to=to, message=message, subject=subject)
+
+
+mail_worker: Mail = Mail(
+    worker=GmailSMTP(work_email=config.email.work_email, work_email_password=config.email.work_email_password,
+                     smtp_server_port=config.email.smtp_server_port, smtp_server_host=config.email.smtp_server_host))

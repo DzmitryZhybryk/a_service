@@ -49,6 +49,9 @@ class RedisWorker:
             name: key to select the data set in the future
             mapping: inserting data
 
+        Raises:
+            HTTP_500_INTERNAL_SERVER_ERROR if database connect not available
+
         """
         async for connect in self.connect():
             await connect.hmset(name=name, mapping=mapping)
@@ -60,6 +63,9 @@ class RedisWorker:
 
         Args:
             name: key to select the data set
+
+        Raises:
+            HTTP_500_INTERNAL_SERVER_ERROR if database connect not available
 
         Returns:
             dict with data from Redis
@@ -78,6 +84,9 @@ class RedisWorker:
             name: key to select the data set in the future
             value: inserting data
 
+        Raises:
+            HTTP_500_INTERNAL_SERVER_ERROR if database connect not available
+
         """
         async for connect in self.connect():
             await connect.set(name=name, value=value)
@@ -89,6 +98,9 @@ class RedisWorker:
 
         Args:
             name: key to select the value
+
+        Raises:
+            HTTP_500_INTERNAL_SERVER_ERROR if database connect not available
 
         Returns:
             value with data from Redis

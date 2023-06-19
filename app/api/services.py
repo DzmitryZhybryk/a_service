@@ -24,6 +24,7 @@ class BaseStorage(ABC):
         activate_person_in_database: method activate new user in the database
 
     """
+
     @abstractmethod
     async def add_user_to_database(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
         """
@@ -79,6 +80,9 @@ class PostgresStorage(BaseStorage):
         Args:
             role: role to select from database
             raise_not_found: if False - return None if user is not found in the database, return exception if True
+
+        Raises:
+            HTTP_500_INTERNAL_SERVER_ERROR if user already exist in database
 
         Returns:
             role from database
@@ -151,13 +155,14 @@ class AuthenticationStorage:
         database_storage: class which implements logic of working with database storage
 
     """
+
     def __init__(self, database_storage: BaseStorage):
         self.__storage = database_storage
 
     async def add_user_to_database(self, user_data: schemas.RegistrateUser):
         """Method implements BaseStorage logic"""
-        await self.__storage.add_user_to_database(user_data=user_data)
+        return await self.__storage.add_user_to_database(user_data=user_data)
 
     async def activate_person_in_database(self, activate_key: str):
         """Method implements BaseStorage logic"""
-        await self.__storage.activate_person_in_database(activate_key=activate_key)
+        return await self.__storage.activate_person_in_database(activate_key=activate_key)

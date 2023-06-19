@@ -1,7 +1,8 @@
 """Module for storage decorators"""
 from fastapi import HTTPException, status
-from sqlalchemy.exc import IntegrityError
+from kombu.exceptions import OperationalError
 from redis.exceptions import RedisError
+from sqlalchemy.exc import IntegrityError
 
 
 def integrity_error_handler(func):
@@ -38,10 +39,31 @@ def redis_exceptions_handler(func):
 
     """
 
-    async def wrapper(self, *args, **kwargs):
+    async def wrapper(*args, **kwargs):
         try:
-            return await func(self, *args, **kwargs)
-        except RedisError as err:
+            return await func(*args, **kwargs)
+        except RedisError:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Redis connection problems")
+
+    return wrapper
+
+
+def operation_error_handler(func):
+    """
+    Decorator, handles Celery error
+
+    Args:
+        func: decorated function
+
+    Returns:
+        decorated function
+
+    """
+
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except OperationalError:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Can't send task")
 
     return wrapper

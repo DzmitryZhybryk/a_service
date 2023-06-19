@@ -8,20 +8,18 @@ from app.database.postgres import use_session
 from app.database.redis import redis_storage
 
 
-def postgres_storage(session: AsyncSession = Depends(use_session),
-                     cache_database=redis_storage) -> PostgresStorage:
+def postgres_storage(session: AsyncSession = Depends(use_session)) -> PostgresStorage:
     """
     Dependency, takes database session and used as a handle for work in AuthenticationStorage class.
 
     Args:
         session: main database session (postgres)
-        cache_database: database connection to work with fast cache memory (redis)
 
     Returns:
         an instance of the AuthenticationStorage class
 
     """
-    return PostgresStorage(session=session, cache_database=cache_database)
+    return PostgresStorage(session=session, cache_database=redis_storage)
 
 
 def authentication_storage(database_storage=Depends(postgres_storage)) -> AuthenticationStorage:

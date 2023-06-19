@@ -1,7 +1,7 @@
 """Модуль для хранения Password класса, для работы с паролями"""
+from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from passlib.exc import UnknownHashError
-from fastapi import HTTPException, status
 
 from app.api import schemas
 

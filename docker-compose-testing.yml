@@ -5,47 +5,47 @@ services:
     extends:
       file: docker-compose-base.yml
       service: authentication
-    command: pdm run dev
-    restart: on-failure
+    command: pdm run test
+    restart: always
     networks:
-      - dev-network
+      - test-network
 
   postgres:
     extends:
       file: docker-compose-base.yml
       service: postgres
-    restart: on-failure
+    restart: always
     networks:
-      - dev-network
+      - test-network
 
   api-celery:
     extends:
       file: docker-compose-base.yml
       service: api-celery
-    restart: on-failure
+    restart: always
     networks:
-      - dev-network
+      - test-network
 
   redis:
     extends:
       file: docker-compose-base.yml
       service: redis
-    restart: on-failure
+    restart: always
     networks:
-      - dev-network
+      - test-network
 
   rabbitmq:
     extends:
       file: docker-compose-base.yml
       service: rabbitmq
-    restart: on-failure
+    restart: always
     networks:
-      - dev-network
+      - test-network
 
 volumes:
   postgres-db:
   redis-cache:
     driver: local
 networks:
-  dev-network:
-    name: dev-network
+  test-network:
+    name: test-network

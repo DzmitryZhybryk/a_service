@@ -2,8 +2,9 @@
 from datetime import date
 from enum import Enum
 from pathlib import Path
-from fastapi import status
+
 from email_validator import validate_email
+from fastapi import status
 from pydantic import BaseModel, validator
 
 from app.config import RunModeType
@@ -13,6 +14,12 @@ class RoleEnum(str, Enum):
     admin = "admin"
     moderator = "moderator"
     base_user = "base_user"
+
+
+class RegistrateResponse(BaseModel):
+    confirm_registration_key: str
+    username: str
+    email: str
 
 
 class RegistrateUser(BaseModel):

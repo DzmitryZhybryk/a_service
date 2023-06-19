@@ -5,12 +5,25 @@ from email.mime.text import MIMEText
 from socket import gaierror
 
 from email_validator import validate_email
+from email_validator.exceptions_types import EmailSyntaxError
 from fastapi import HTTPException, status
 
 from app.config import config
 
 
 class MailSMTP(ABC):
+    """
+    An abstract class that implements an interface for child classes
+
+    Methods:
+        send_email: method send email to other people
+
+    Args:
+        work_email: mail from which messages are sent
+        work_email_password: work email password
+        smtp_server_host:
+
+    """
 
     def __init__(self, work_email: str, work_email_password: str, smtp_server_host: str, smtp_server_port: int):
         self._work_email = work_email
@@ -51,7 +64,7 @@ class GmailSMTP(MailSMTP):
 
     def send_email(self, to: str, message: str, subject: str) -> None:
         """
-        Method sends email
+        Override method sends email
 
         Args:
             to: recipient's email
@@ -67,21 +80,23 @@ class GmailSMTP(MailSMTP):
             msg = MIMEText(message)
             msg = self.__email_config(msg=msg, recipient=to, subject=subject)
             server.sendmail(self._work_email, to, msg.as_string())
-        except (gaierror, smtplib.SMTPAuthenticationError):
+        except (gaierror, smtplib.SMTPAuthenticationError, smtplib.SMTPRecipientsRefused):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Problems sending email")
 
 
 class Mail:
+    """
+
+    """
 
     def __init__(self, worker: MailSMTP):
-        """Inits GmailWorker class"""
         self.__worker = worker
 
     def send_email(self, to: str, message: str, subject: str):
         try:
             validate_email(to)
-        except Exception as ex:
-            print(ex)
+        except EmailSyntaxError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email is not valid")
 
         self.__worker.send_email(to=to, message=message, subject=subject)
 

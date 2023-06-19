@@ -3,32 +3,38 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.handlers import AuthenticationHandlers
-from app.api.services import AuthenticationStorage
+from app.api.services import AuthenticationStorage, PostgresStorage
 from app.database.postgres import use_session
 from app.database.redis import redis_storage
 
 
-def authentication_storage(session: AsyncSession = Depends(use_session)) -> AuthenticationStorage:
+def postgres_storage(session: AsyncSession = Depends(use_session),
+                     cache_database=redis_storage) -> PostgresStorage:
     """
-    Dependency, gets database session. Used as a handle for work with AuthenticationStorage
+    Dependency, takes database session and used as a handle for work in AuthenticationStorage class.
 
     Args:
-        session: database session
+        session: main database session (postgres)
+        cache_database: database connection to work with fast cache memory (redis)
 
     Returns:
         an instance of the AuthenticationStorage class
 
     """
-    return AuthenticationStorage(session=session, cache_database=redis_storage)
+    return PostgresStorage(session=session, cache_database=cache_database)
+
+
+def authentication_storage(database_storage=Depends(postgres_storage)) -> AuthenticationStorage:
+    return AuthenticationStorage(database_storage=database_storage)
 
 
 def authentication_handler(storage: AuthenticationStorage = Depends(authentication_storage)) -> AuthenticationHandlers:
     """
-    Dependency, gets an instance of the AuthenticationStorage class.
-    Used as a handle for work with AuthenticationHandlers
+    Dependency, takes an instance of the AuthenticationStorage class and used as a handle for work with
+    AuthenticationHandlers class.
 
     Args:
-        storage: an instance of the AuthenticationStorage class
+        storage: an instance of the AuthenticationStorage class with database connections
 
     Returns:
         an instance of the AuthenticationHandlers class

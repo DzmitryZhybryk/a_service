@@ -7,9 +7,8 @@ from hypercorn.asyncio import serve
 from hypercorn.config import Config
 
 from app.api.routes import router as auth_router
-from app.api.services import AuthenticationStorage
-from app.database.postgres import engine, use_session
-from app.database.redis import redis_storage
+from app.database.models import Role, User
+from app.database.postgres import engine
 from app.utils.funcs import get_app_metadata
 
 app_metadata = asyncio.run(get_app_metadata())
@@ -36,11 +35,16 @@ app.include_router(auth_router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def on_startup() -> None:
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
-    async for session in use_session():
-        authentication_storage_handle = AuthenticationStorage(session=session, cache_database=redis_storage)
-        await authentication_storage_handle.create_init_database_data()
+    role, user = Role(), User()
+    await role.create_init_roles()
+    await user.creat_init_user()
+
+    """
+    Use this if you want create init database table without alembic
+    
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    """
 
 
 @app.on_event("shutdown")

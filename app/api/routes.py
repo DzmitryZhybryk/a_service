@@ -1,8 +1,8 @@
 """Module for storage authentication service routes"""
 from typing import Annotated
-
+import asyncio
 from fastapi import APIRouter, Depends, status
-
+from fastapi import HTTPException,status
 from app.api import dependencies, schemas
 from app.api.handlers import AuthenticationHandlers
 from app.utils.funcs import get_app_metadata

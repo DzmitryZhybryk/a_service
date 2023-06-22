@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
+from prometheus_client import make_asgi_app
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.routes import router as auth_router
 from app.database.models import Role, User
@@ -22,6 +24,11 @@ parser.add_argument("--port", help=f"TCP port API server would listen on", type=
 app = FastAPI(docs_url="/api/v1/docs", redoc_url="/api/v1/redoc", title=app_metadata.name, version=app_metadata.version,
               description=app_metadata.description, swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"})
 
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
+instrumentator = Instrumentator().instrument(app)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -38,6 +45,7 @@ async def on_startup() -> None:
     role, user = Role(), User()
     await role.create_init_roles()
     await user.creat_init_user()
+    instrumentator.expose(app)
 
     """
     Use this if you want create init database table without alembic

@@ -6,7 +6,7 @@ Service with API for authentication users and management
 
 The following environment variables are available to control the operation of the application:
 
-https://github.com/DzmitryZhybryk/authentication_service/blob/main/environments.md?plain=1
+ [environments.md](https://github.com/DzmitryZhybryk/authentication_service/blob/main/environments.md?plain=1)
 
 .env file example:
 

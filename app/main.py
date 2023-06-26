@@ -12,6 +12,7 @@ from app.api.routes import router as auth_router
 from app.database.models import Role, User
 from app.database.postgres import engine
 from app.utils.funcs import get_app_metadata
+from app.utils.metrics import http_requested_app_work_time
 
 app_metadata = asyncio.run(get_app_metadata())
 
@@ -27,7 +28,8 @@ app = FastAPI(docs_url="/api/v1/docs", redoc_url="/api/v1/redoc", title=app_meta
 metrics_app = make_asgi_app()
 app.mount("/metrics", metrics_app)
 
-instrumentator = Instrumentator().instrument(app)
+instrumentator = Instrumentator()
+instrumentator.instrument(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +48,7 @@ async def on_startup() -> None:
     await role.create_init_roles()
     await user.creat_init_user()
     instrumentator.expose(app)
+    instrumentator.add(http_requested_app_work_time())
 
     """
     Use this if you want create init database table without alembic

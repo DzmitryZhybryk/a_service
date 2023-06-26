@@ -33,7 +33,7 @@ services:
     tty: true
 
   postgres:
-    image: postgres:latest
+    image: postgres:15.3
     container_name: postgres
     ports:
       - "5432:5432"
@@ -45,7 +45,7 @@ services:
     tty: true
 
   redis:
-    image: redis
+    image: redis:7.0.11
     container_name: redis
     ports:
       - '6379:6379'
@@ -69,7 +69,49 @@ services:
       - ./rabbitmq:/var/lib/rabbitmq
     tty: true
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs:/etc/prometheus/
+      - prom-data:/prometheus
+
+  exporter:
+    image: prom/node-exporter:latest
+    container_name: exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude'
+      - '^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
+    tty: true
+
+  grafana:
+    image: grafana/grafana:8.2.6
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_LOG_LEVEL=info
+      - GF_SECURITY_ADMIN_USER=test
+      - GF_SECURITY_ADMIN_PASSWORD=test
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - grafana-configs:/etc/grafana
+    tty: true
+
 volumes:
   postgres-db:
+  prom-data:
+  grafana-data:
+  grafana-configs:
   redis-cache:
     driver: local

@@ -42,10 +42,42 @@ services:
     networks:
       - dev-network
 
+  prometheus:
+    extends:
+      file: docker-compose-base.yml
+      service: prometheus
+    restart: on-failure
+    networks:
+      - dev-network
+
+  exporter:
+    extends:
+      file: docker-compose-base.yml
+      service: exporter
+    restart: on-failure
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - dev-network
+
+  grafana:
+    extends:
+      file: docker-compose-base.yml
+      service: grafana
+    restart: on-failure
+    networks:
+      - dev-network
+
 volumes:
   postgres-db:
+  prom-data:
+  grafana-data:
+  grafana-configs:
   redis-cache:
     driver: local
+
 networks:
   dev-network:
     name: dev-network

@@ -316,6 +316,22 @@ requires_python = ">=3.6.1"
 summary = "A pure-Python implementation of the HTTP/2 priority tree"
 
 [[package]]
+name = "prometheus-client"
+version = "0.17.0"
+requires_python = ">=3.6"
+summary = "Python client for the Prometheus monitoring system."
+
+[[package]]
+name = "prometheus-fastapi-instrumentator"
+version = "6.0.0"
+requires_python = ">=3.7.0,<4.0.0"
+summary = "Instrument your FastAPI with Prometheus metrics."
+dependencies = [
+    "fastapi<1.0.0,>=0.38.1",
+    "prometheus-client<1.0.0,>=0.8.0",
+]
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.38"
 requires_python = ">=3.7.0"
@@ -558,7 +574,7 @@ dependencies = [
 lock_version = "4.2"
 cross_platform = true
 groups = ["default", "test"]
-content_hash = "sha256:c3a896636cb980050bf90187f6685ecb39dfc0c161ba8ff87443200db5cae3f3"
+content_hash = "sha256:af2dd8bb63f7015cd18f7ba9b94e41fce2d4de3af85d39bb9c9173538e59b40d"
 
 [metadata.files]
 "aiofiles 23.1.0" = [
@@ -842,9 +858,21 @@ content_hash = "sha256:c3a896636cb980050bf90187f6685ecb39dfc0c161ba8ff87443200db
     {url = "https://files.pythonhosted.org/packages/5e/5f/82c8074f7e84978129347c2c6ec8b6c59f3584ff1a20bc3c940a3e061790/priority-2.0.0-py3-none-any.whl", hash = "sha256:6f8eefce5f3ad59baf2c080a664037bb4725cd0a790d53d59ab4059288faf6aa"},
     {url = "https://files.pythonhosted.org/packages/f5/3c/eb7c35f4dcede96fca1842dac5f4f5d15511aa4b52f3a961219e68ae9204/priority-2.0.0.tar.gz", hash = "sha256:c965d54f1b8d0d0b19479db3924c7c36cf672dbf2aec92d43fbdaf4492ba18c0"},
 ]
+"prometheus-client 0.17.0" = [
+    {url = "https://files.pythonhosted.org/packages/0e/01/bda72c3b5d4a0df411bceb88c4993d413dd9b7d3b3b68ab19171a09e7db1/prometheus_client-0.17.0.tar.gz", hash = "sha256:9c3b26f1535945e85b8934fb374678d263137b78ef85f305b1156c7c881cd11b"},
+    {url = "https://files.pythonhosted.org/packages/5b/62/75fc6f255e214ff0a8bd3267a0bd337521dd24f76cd593c10795e488f41b/prometheus_client-0.17.0-py3-none-any.whl", hash = "sha256:a77b708cf083f4d1a3fb3ce5c95b4afa32b9c521ae363354a4a910204ea095ce"},
+]
+"prometheus-fastapi-instrumentator 6.0.0" = [
+    {url = "https://files.pythonhosted.org/packages/28/26/2cf61a59fd24ee2c0ac964fae54b08d40de8083c316745a924aaad1576fd/prometheus_fastapi_instrumentator-6.0.0.tar.gz", hash = "sha256:f1ddd0b8ead75e71d055bdf4cb7e995ec6a6ca63543245e7bbc5ca9b14c45191"},
+    {url = "https://files.pythonhosted.org/packages/e9/29/4bf01823cc1bfb013a7ff671be7f1fc58ec7395dacc53e16c616576b06c8/prometheus_fastapi_instrumentator-6.0.0-py3-none-any.whl", hash = "sha256:6f66a951a4801667f7311d161f3aebfe0cd202391d0f067fbbe169792e2d987b"},
+]
 "prompt-toolkit 3.0.38" = [
     {url = "https://files.pythonhosted.org/packages/4b/bb/75cdcd356f57d17b295aba121494c2333d26bfff1a837e6199b8b83c415a/prompt_toolkit-3.0.38.tar.gz", hash = "sha256:23ac5d50538a9a38c8bde05fecb47d0b403ecd0662857a86f886f798563d5b9b"},
     {url = "https://files.pythonhosted.org/packages/87/3f/1f5a0ff475ae6481f4b0d45d4d911824d3218b94ee2a97a8cb84e5569836/prompt_toolkit-3.0.38-py3-none-any.whl", hash = "sha256:45ea77a2f7c60418850331366c81cf6b5b9cf4c7fd34616f733c5427e6abbb1f"},
+]
+"psycopg 3.1.9" = [
+    {url = "https://files.pythonhosted.org/packages/7f/56/6463b9b47400710819153dcdfecf29d6d2f63f772e524f94b090fe5716a2/psycopg-3.1.9.tar.gz", hash = "sha256:ab400f207a8c120bafdd8077916d8f6c0106e809401378708485b016508c30c9"},
+    {url = "https://files.pythonhosted.org/packages/c6/53/729709c14684fa8e53b6a95ac75d35c3928b142a9091b78382609fabf2b2/psycopg-3.1.9-py3-none-any.whl", hash = "sha256:fbbac339274d8733ee70ba9822297af3e8871790a26e967b5ea53e30a4b74dcc"},
 ]
 "psycopg-binary 3.1.9" = [
     {url = "https://files.pythonhosted.org/packages/01/4e/fbb893f6453a1a8ad9405dfcc2bafdf5a852808193718a8e073860e7adc7/psycopg_binary-3.1.9-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:03b08545ce1c627f4d5e6384eda2946660c4ba6ceb0a09ae47de07419f725669"},
@@ -901,10 +929,6 @@ content_hash = "sha256:c3a896636cb980050bf90187f6685ecb39dfc0c161ba8ff87443200db
     {url = "https://files.pythonhosted.org/packages/ee/8b/b94fcdd30736a98d48d9217ad2000d4cb22bd789bfa885c70e3bf2143253/psycopg_binary-3.1.9-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:f41a9e0de4db194c053bcc7c00c35422a4d19d92a8187e8065b1c560626efe35"},
     {url = "https://files.pythonhosted.org/packages/f9/28/44c58c23a8f9e892b9bd759fb5bbba17755131a2059acbbd7c08dc0c7197/psycopg_binary-3.1.9-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:c7d990f14a37345ca05a5192cd5ac938c9cbedca9c929872af6ae311158feb0e"},
     {url = "https://files.pythonhosted.org/packages/ff/47/301b5454f79f8c65a617670844ad9074f3ef641cb12e46bec5a5cf95568d/psycopg_binary-3.1.9-cp311-cp311-musllinux_1_1_ppc64le.whl", hash = "sha256:a274c63c8fb9d419509bed2ef72befc1fd04243972e17e7f5afc5725cb13a560"},
-]
-"psycopg 3.1.9" = [
-    {url = "https://files.pythonhosted.org/packages/7f/56/6463b9b47400710819153dcdfecf29d6d2f63f772e524f94b090fe5716a2/psycopg-3.1.9.tar.gz", hash = "sha256:ab400f207a8c120bafdd8077916d8f6c0106e809401378708485b016508c30c9"},
-    {url = "https://files.pythonhosted.org/packages/c6/53/729709c14684fa8e53b6a95ac75d35c3928b142a9091b78382609fabf2b2/psycopg-3.1.9-py3-none-any.whl", hash = "sha256:fbbac339274d8733ee70ba9822297af3e8871790a26e967b5ea53e30a4b74dcc"},
 ]
 "pyasn1 0.5.0" = [
     {url = "https://files.pythonhosted.org/packages/14/e5/b56a725cbde139aa960c26a1a3ca4d4af437282e20b5314ee6a3501e7dfc/pyasn1-0.5.0-py2.py3-none-any.whl", hash = "sha256:87a2121042a1ac9358cabcaf1d07680ff97ee6404333bacca15f76aa8ad01a57"},

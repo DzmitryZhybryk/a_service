@@ -1,13 +1,14 @@
 import asyncio
 from argparse import ArgumentParser
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from prometheus_client import make_asgi_app
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from app.api import dependencies
 from app.api.routes import router as auth_router
 from app.database.models import Role, User
 from app.database.postgres import engine
@@ -39,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(auth_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1", dependencies=[Depends(dependencies.get_api_key)])
 
 
 @app.on_event("startup")
@@ -47,6 +48,7 @@ async def on_startup() -> None:
     role, user = Role(), User()
     await role.create_init_roles()
     await user.creat_init_user()
+
     instrumentator.expose(app)
     instrumentator.add(http_requested_app_work_time())
 

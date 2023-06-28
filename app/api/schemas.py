@@ -1,5 +1,5 @@
 """Module for storage pydantic models"""
-from datetime import date
+from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 
@@ -59,6 +59,22 @@ class RegistrateUser(BaseModel):
                 "user_role": "base_user"
             }
         }
+
+
+class GetUserResponse(BaseModel):
+    id: int
+    nickname: str
+    first_name: str | None
+    last_name: str | None
+    main_photo: str | None
+    activated_at: bool | None
+    created_date: datetime
+    username: str
+    email: str
+    birthday: datetime | None
+    is_user_activate: bool
+    updated_date: datetime | None
+    role: object
 
 
 class ResponseToken(BaseModel):

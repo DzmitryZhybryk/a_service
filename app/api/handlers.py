@@ -50,7 +50,7 @@ class AuthenticationHandlers:
         return tokens
 
     @staticmethod
-    def confirm_registration(email: str, username: str, confirm_key: str):
+    def confirm_registration(email: str, username: str, confirm_key: str) -> None:
         """
         Method send tasks for confirm registration user
 
@@ -64,3 +64,17 @@ class AuthenticationHandlers:
 
         """
         tasks.send_confirm_registration_email.delay(email=email, username=username, confirm_key=confirm_key)
+
+    async def get_user(self, user_id: int) -> schemas.GetUserResponse:
+        """
+        Method get user id and return user data
+
+        Args:
+            user_id: user identification key in a database
+
+        Returns:
+            pydantic model with user data
+
+        """
+        user = await self.__services.get_user_by_id(user_id=user_id)
+        return user

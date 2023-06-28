@@ -22,6 +22,7 @@ class BaseStorage(ABC):
     Methods:
         add_user_to_database: method insert new user to database
         activate_person_in_database: method activate new user in the database
+        get_user_by_id: method selects user from database by user id
 
     """
 
@@ -50,6 +51,20 @@ class BaseStorage(ABC):
         """
         pass
 
+    @abstractmethod
+    async def get_user_by_id(self, user_id: int) -> schemas.GetUserResponse:
+        """
+        Method selects user in database by user id
+
+        Args:
+            user_id: user identification key in a database
+
+        Returns:
+            pydantic model with user data
+
+        """
+        pass
+
 
 class PostgresStorage(BaseStorage):
     """
@@ -58,6 +73,7 @@ class PostgresStorage(BaseStorage):
     Methods:
         add_user_to_database: method insert new user to database
         activate_person_in_database: method activate new user in the database
+        get_user_by_id: method selects user from database by user id
 
     Args:
         session: main database session (postgres)
@@ -70,7 +86,7 @@ class PostgresStorage(BaseStorage):
         self.__session = session
         self.__cache_database = cache_database
         self.__role_model = Role
-        self.__user_mode = User
+        self.__user_model = User
         self.__jwt_worker = JWTManager()
 
     async def __select_role(self, role: str, raise_not_found=False) -> Role | None:
@@ -107,6 +123,7 @@ class PostgresStorage(BaseStorage):
         await self.__session.commit()
         confirm_registration_key = make_confirm_registration_key(_range=20)
         await self.__cache_database.set_data(name=confirm_registration_key, value=registered_user.id)
+
         response_schema = schemas.RegistrateResponse(username=registered_user.username, email=registered_user.email,
                                                      confirm_registration_key=confirm_registration_key)
         return response_schema
@@ -130,7 +147,7 @@ class PostgresStorage(BaseStorage):
     async def activate_person_in_database(self, activate_key: str) -> schemas.ResponseToken:
         """Overrides base class method"""
         user_id = await self.__cache_database.get_data(name=activate_key)
-        stmt = update(self.__user_mode).returning(User).where(User.id == int(user_id)).values(
+        stmt = update(self.__user_model).returning(User).where(User.id == int(user_id)).values(
             is_user_activate=True).options(selectinload(User.role))
         response = await self.__session.execute(stmt)
         activated_user = response.scalar_one()
@@ -139,7 +156,18 @@ class PostgresStorage(BaseStorage):
         await self.__cache_database.hmset_data(name=refresh_token,
                                                mapping={"username": activated_user.username, "id": activated_user.id,
                                                         "role": activated_user.role.role})
+
         response_schema = schemas.ResponseToken(access_token=access_token, refresh_token=refresh_token)
+        return response_schema
+
+    async def get_user_by_id(self, user_id: int, raise_not_found: bool = True) -> schemas.GetUserResponse:
+        """Overrides base class method"""
+        stmt = select(self.__user_model).where(User.id == user_id).options(selectinload(User.role))
+        result = await self.__session.scalar(stmt)
+        if not result and raise_not_found:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with user_id: {user_id} not found")
+
+        response_schema = schemas.GetUserResponse(**result.dict())
         return response_schema
 
 
@@ -150,19 +178,24 @@ class AuthenticationStorage:
     Methods:
         add_user_to_database: method insert new user to database
         activate_person_in_database: method activate new user in the database
+        get_user_by_id: method selects user from database by user id
 
     Args:
         database_storage: class which implements logic of working with database storage
 
     """
 
-    def __init__(self, database_storage: BaseStorage):
+    def __init__(self, database_storage: BaseStorage) -> None:
         self.__storage = database_storage
 
-    async def add_user_to_database(self, user_data: schemas.RegistrateUser):
+    async def add_user_to_database(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
         """Method implements BaseStorage logic"""
         return await self.__storage.add_user_to_database(user_data=user_data)
 
-    async def activate_person_in_database(self, activate_key: str):
+    async def activate_person_in_database(self, activate_key: str) -> schemas.ResponseToken:
         """Method implements BaseStorage logic"""
         return await self.__storage.activate_person_in_database(activate_key=activate_key)
+
+    async def get_user_by_id(self, user_id: int) -> schemas.GetUserResponse:
+        """Method implements BaseStorage logic"""
+        return await self.__storage.get_user_by_id(user_id=user_id)

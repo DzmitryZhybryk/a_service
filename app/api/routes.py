@@ -38,3 +38,9 @@ def confirm_registration(email: str, username: str, confirm_key: str, handler: B
 async def activate_user(key: str, handler: BaseHandlerDep):
     tokens = await handler.activate_user(activate_key=key)
     return tokens
+
+
+@router.get("/users/{user_id}/", tags=["Authentication"])
+async def get_user(user_id: int, handler: BaseHandlerDep):
+    user = await handler.get_user(user_id=user_id)
+    return user

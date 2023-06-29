@@ -27,7 +27,7 @@ class BaseStorage(ABC):
     """
 
     @abstractmethod
-    async def add_user_to_database(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
+    async def add_user_to_database(self, user_data: schemas.request.RegistrateUser) -> schemas.response.Registrate:
         """
         Method gets new user data and insert it to database
 
@@ -38,7 +38,7 @@ class BaseStorage(ABC):
         pass
 
     @abstractmethod
-    async def activate_person_in_database(self, activate_key: str) -> schemas.ResponseToken:
+    async def activate_person_in_database(self, activate_key: str) -> schemas.response.Token:
         """
         Method gets the user's email and activate that user in the database
 
@@ -52,7 +52,7 @@ class BaseStorage(ABC):
         pass
 
     @abstractmethod
-    async def get_user_by_id(self, user_id: int) -> schemas.GetUserResponse:
+    async def get_user_by_id(self, user_id: int) -> schemas.response.GetUser:
         """
         Method selects user in database by user id
 
@@ -112,20 +112,20 @@ class PostgresStorage(BaseStorage):
         return result
 
     @decorators.integrity_error_handler
-    async def add_user_to_database(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
+    async def add_user_to_database(self, user_data: schemas.request.RegistrateUser) -> schemas.response.Registrate:
         """Overrides base class method"""
         user_role = await self.__select_role(role=user_data.role, raise_not_found=True)
         hashed_password = PasswordManager(password=user_data.password).hash_password()
         stmt = insert(User).returning(User).values(role_id=user_role.id, password=hashed_password,
                                                    **user_data.dict(exclude={"role", "password", "confirm_password"}))
-        response = await self.__session.execute(stmt)
-        registered_user = response.scalar_one()
+        database_response = await self.__session.execute(stmt)
+        registered_user = database_response.scalar_one()
         await self.__session.commit()
         confirm_registration_key = make_confirm_registration_key(_range=20)
         await self.__cache_database.set_data(name=confirm_registration_key, value=registered_user.id)
 
-        response_schema = schemas.RegistrateResponse(username=registered_user.username, email=registered_user.email,
-                                                     confirm_registration_key=confirm_registration_key)
+        response_schema = schemas.response.Registrate(username=registered_user.username, email=registered_user.email,
+                                                      confirm_registration_key=confirm_registration_key)
         return response_schema
 
     def __make_tokens(self, user: User) -> tuple[str, str]:
@@ -144,7 +144,7 @@ class PostgresStorage(BaseStorage):
         refresh_token = self.__jwt_worker.create_refresh_token()
         return access_token, refresh_token
 
-    async def activate_person_in_database(self, activate_key: str) -> schemas.ResponseToken:
+    async def activate_person_in_database(self, activate_key: str) -> schemas.response.Token:
         """Overrides base class method"""
         user_id = await self.__cache_database.get_data(name=activate_key)
         stmt = update(self.__user_model).returning(User).where(User.id == int(user_id)).values(
@@ -157,19 +157,17 @@ class PostgresStorage(BaseStorage):
                                                mapping={"username": activated_user.username, "id": activated_user.id,
                                                         "role": activated_user.role.role})
 
-        response_schema = schemas.ResponseToken(access_token=access_token, refresh_token=refresh_token)
+        response_schema = schemas.response.Token(access_token=access_token, refresh_token=refresh_token)
         return response_schema
 
-    async def get_user_by_id(self, user_id: int, raise_not_found: bool = True) -> schemas.GetUserResponse:
+    async def get_user_by_id(self, user_id: int, raise_not_found: bool = True) -> schemas.response.GetUser:
         """Overrides base class method"""
         stmt = select(self.__user_model).where(User.id == user_id).options(selectinload(User.role))
         result = await self.__session.scalar(stmt)
         if not result and raise_not_found:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with user_id: {user_id} not found")
 
-        print("###############")
-        print(type(result.birthday))
-        response_schema = schemas.GetUserResponse(**result.dict())
+        response_schema = schemas.response.GetUser(**result.dict())
         return response_schema
 
 
@@ -190,14 +188,14 @@ class AuthenticationStorage:
     def __init__(self, database_storage: BaseStorage) -> None:
         self.__storage = database_storage
 
-    async def add_user_to_database(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
+    async def add_user_to_database(self, user_data: schemas.request.RegistrateUser) -> schemas.response.Registrate:
         """Method implements BaseStorage logic"""
         return await self.__storage.add_user_to_database(user_data=user_data)
 
-    async def activate_person_in_database(self, activate_key: str) -> schemas.ResponseToken:
+    async def activate_person_in_database(self, activate_key: str) -> schemas.response.Token:
         """Method implements BaseStorage logic"""
         return await self.__storage.activate_person_in_database(activate_key=activate_key)
 
-    async def get_user_by_id(self, user_id: int) -> schemas.GetUserResponse:
+    async def get_user_by_id(self, user_id: int) -> schemas.response.GetUser:
         """Method implements BaseStorage logic"""
         return await self.__storage.get_user_by_id(user_id=user_id)

@@ -1,7 +1,6 @@
 """Module for storage AuthenticationHandler class"""
 
-from app.api import schemas
-from app.api import tasks
+from app.api import tasks, schemas
 from app.api.services import AuthenticationStorage
 
 
@@ -21,7 +20,7 @@ class AuthenticationHandlers:
     def __init__(self, storage: AuthenticationStorage) -> None:
         self.__services = storage
 
-    async def registrate_user(self, user_data: schemas.RegistrateUser) -> schemas.RegistrateResponse:
+    async def registrate_user(self, user_data: schemas.request.RegistrateUser) -> schemas.response.Registrate:
         """
         Method registers new user.
 
@@ -35,7 +34,7 @@ class AuthenticationHandlers:
         new_user = await self.__services.add_user_to_database(user_data=user_data)
         return new_user
 
-    async def activate_user(self, activate_key: str) -> schemas.ResponseToken:
+    async def activate_user(self, activate_key: str) -> schemas.response.Token:
         """
         Method activate user
 
@@ -65,7 +64,7 @@ class AuthenticationHandlers:
         """
         tasks.send_confirm_registration_email.delay(email=email, username=username, confirm_key=confirm_key)
 
-    async def get_user(self, user_id: int) -> schemas.GetUserResponse:
+    async def get_user(self, user_id: int) -> schemas.response.GetUser:
         """
         Method get user id and return user data
 

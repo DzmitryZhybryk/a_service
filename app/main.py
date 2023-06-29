@@ -1,14 +1,13 @@
 import asyncio
 from argparse import ArgumentParser
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
 from prometheus_client import make_asgi_app
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from app.api import dependencies
 from app.api.routes import router as auth_router
 from app.database.models import Role, User
 from app.database.postgres import engine

@@ -71,7 +71,7 @@ class GetUserResponse(BaseModel):
     created_date: datetime
     username: str
     email: str
-    birthday: datetime | None
+    birthday: date | None
     is_user_activate: bool
     updated_date: datetime | None
     role: object

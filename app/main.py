@@ -40,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(auth_router, prefix="/api/v1", dependencies=[Depends(dependencies.get_api_key)])
+app.include_router(auth_router, prefix="/api/v1")
 
 
 @app.on_event("startup")

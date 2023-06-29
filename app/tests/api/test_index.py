@@ -11,6 +11,7 @@ from app.main import app
 test_client = TestClient(app)
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 class TestIndex:
 

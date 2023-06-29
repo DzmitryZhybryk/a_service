@@ -37,7 +37,9 @@ pre_start = { composite = ["pdm run alembic upgrade head"]}
 i-prod = "pdm install --prod"
 i-dev = "pdm install --dev -G test"
 dev = "pdm run hypercorn --bind 0.0.0.0:8001 --reload --access-logfile - app.main:app"
-test = "pdm run pytest"
+integration-test = "pdm run pytest -sm integration"
+test-alembic = "pdm run pytest -m alembic"
+unittest = "pdm run pytest -sm unittest"
 
 [tool.pdm.dev-dependencies]
 test = [
@@ -46,4 +48,5 @@ test = [
     "httpx>=0.24.1",
     "pytest-asyncio>=0.21.0",
     "pytest-check>=2.1.5",
+    "pyyaml>=6.0",
 ]

@@ -4,7 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ARG INSTALL_COMMAND=i-prod
 WORKDIR /code
 
-COPY ./pyproject.toml ./pdm.lock ./alembic.ini /code/
+COPY ./pyproject.toml ./pdm.lock ./alembic.ini ./pytest.ini /code/
 COPY ./app /code/app/
 
 RUN pip install pdm && \

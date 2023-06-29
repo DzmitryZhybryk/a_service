@@ -167,6 +167,8 @@ class PostgresStorage(BaseStorage):
         if not result and raise_not_found:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with user_id: {user_id} not found")
 
+        print("###############")
+        print(type(result.birthday))
         response_schema = schemas.GetUserResponse(**result.dict())
         return response_schema
 

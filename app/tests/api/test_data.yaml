@@ -1,0 +1,24 @@
+test_registrate_response_status:
+  params:
+    - rout_url
+    - test_user
+  values:
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        user_role: base_user
+
+
+#test_registrate_response_status:
+#  params:
+#    - username
+#    - password
+#  values:
+#    - - "dzmitry"
+#      - "zhybryk"

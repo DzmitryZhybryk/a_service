@@ -33,6 +33,6 @@ class RegistrateUser(UserBase):
                 "first_name": "Jon",
                 "last_name": "Smith",
                 "birthday": "2023-06-08",
-                "user_role": "base_user"
+                "role": "base_user"
             }
         }

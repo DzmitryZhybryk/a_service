@@ -29,7 +29,6 @@ class Database(BaseSettings):
 
 
 class InitData(BaseSettings):
-    test_mode: bool = False
     password: str
     username: str = "admin"
     email: str = "admin@gmail.com"

@@ -49,6 +49,7 @@ class InitData(BaseSettings):
 
 
 class Secret(BaseSettings):
+    api_key: str
     secret_key: str
     salt: str
     jwt_algorithm: str

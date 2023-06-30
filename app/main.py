@@ -47,6 +47,7 @@ async def on_startup() -> None:
     role, user = Role(), User()
     await role.create_init_roles()
     await user.creat_init_user()
+
     instrumentator.expose(app)
     instrumentator.add(http_requested_app_work_time())
 

@@ -11,6 +11,7 @@ from app.main import app
 test_client = TestClient(app)
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
 class TestIndex:
 
@@ -27,3 +28,7 @@ class TestIndex:
             check.is_not_none(response_json.get("environment"))
             check.is_not_none(response_json.get("run_mode"))
             check.is_not_none(response_json.get("logs_dir"))
+
+    async def test_index_expect_403(self, index_page: AsyncGenerator[httpx.Response, None]):
+        async for response in index_page:
+            assert response.status_code == status.HTTP_403_FORBIDDEN

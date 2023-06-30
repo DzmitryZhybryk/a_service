@@ -5,15 +5,7 @@ services:
     extends:
       file: docker-compose-base.yml
       service: authentication
-    command: pdm run test
-    restart: always
-    networks:
-      - test-network
-
-  postgres:
-    extends:
-      file: docker-compose-base.yml
-      service: postgres
+    command: bash -c "pdm run test-alembic &&  pdm run integration-test"
     restart: always
     networks:
       - test-network
@@ -23,14 +15,31 @@ services:
       file: docker-compose-base.yml
       service: api-celery
     restart: always
+    depends_on:
+      - rabbitmq
+    networks:
+      - test-network
+
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    ports:
+      - "5433:5433"
+    env_file:
+      - .env
     networks:
       - test-network
 
   redis:
-    extends:
-      file: docker-compose-base.yml
-      service: redis
-    restart: always
+    image: redis:7.0.11
+    container_name: redis
+    ports:
+      - '6380:6380'
+    env_file:
+      - .env
+#    volumes:
+#      - redis-test-cache:/data
+    command: redis-server --requirepass 3050132596
     networks:
       - test-network
 
@@ -39,13 +48,13 @@ services:
       file: docker-compose-base.yml
       service: rabbitmq
     restart: always
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
     networks:
       - test-network
 
-volumes:
-  postgres-db:
-  redis-cache:
-    driver: local
+#  redis-test-cache:
+#    driver: local
 networks:
   test-network:
     name: test-network

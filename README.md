@@ -101,7 +101,7 @@ Integration-tests run automatically after pull-request to the develop branch
 For start integration_tests inside docker compose use command:
 
 ```bash
-docker compose -f .\docker-compose-test.yml up --abort-on-container-exit --build
+docker compose -f .\docker-compose-testing.yml up --abort-on-container-exit --build
 ```
 
 ## Swagger documentation

@@ -3,10 +3,11 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 WORKDIR /code
 
-COPY ./pyproject.toml ./pdm.lock ./pytest.ini /code/
+COPY ./pyproject.toml ./pdm.lock /code/
 
 RUN pip install pdm && \
     python -m pdm install -dG test
-COPY ./app /code/app/
 
+COPY ./pytest.ini /code/
+COPY ./app /code/app/
 CMD pdm run pytest -m "unittest"

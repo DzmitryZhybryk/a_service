@@ -11,9 +11,6 @@ services:
       - "8001:8001"
     env_file:
       - .env
-    volumes:
-      - ./app/:/code/app
-      - ./app/logs:/code/logs
     depends_on:
       - postgres
       - redis
@@ -35,13 +32,8 @@ services:
   postgres:
     image: postgres:15.3
     container_name: postgres
-    ports:
-      - "5432:5432"
     env_file:
       - .env
-    volumes:
-      #      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - postgres-db:/var/lib/postgresql/data
     tty: true
 
   redis:
@@ -51,8 +43,6 @@ services:
       - '6379:6379'
     env_file:
       - .env
-    volumes:
-      - redis-cache:/data
     command: redis-server --requirepass 3050132596
     tty: true
 
@@ -65,8 +55,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    volumes:
-      - ./rabbitmq:/var/lib/rabbitmq
     tty: true
 
   prometheus:
@@ -77,6 +65,7 @@ services:
     volumes:
       - ./configs:/etc/prometheus/
       - prom-data:/prometheus
+    tty: true
 
   exporter:
     image: prom/node-exporter:latest
@@ -109,9 +98,8 @@ services:
     tty: true
 
 volumes:
-  postgres-db:
   prom-data:
   grafana-data:
   grafana-configs:
-  redis-cache:
-    driver: local
+#  redis-cache:
+#    driver: local

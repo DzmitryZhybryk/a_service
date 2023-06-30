@@ -7,14 +7,9 @@ services:
       service: authentication
     command: pdm run dev
     restart: on-failure
-    networks:
-      - dev-network
-
-  postgres:
-    extends:
-      file: docker-compose-base.yml
-      service: postgres
-    restart: on-failure
+    volumes:
+      - ./app/:/code/app
+      - ./app/logs:/code/logs
     networks:
       - dev-network
 
@@ -26,11 +21,26 @@ services:
     networks:
       - dev-network
 
+  postgres:
+    extends:
+      file: docker-compose-base.yml
+      service: postgres
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    volumes:
+      #      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - dev-network
+
   redis:
     extends:
       file: docker-compose-base.yml
       service: redis
     restart: on-failure
+    volumes:
+      - redis-cache:/data
     networks:
       - dev-network
 
@@ -39,6 +49,8 @@ services:
       file: docker-compose-base.yml
       service: rabbitmq
     restart: on-failure
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
     networks:
       - dev-network
 

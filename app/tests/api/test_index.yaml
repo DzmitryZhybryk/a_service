@@ -1,0 +1,23 @@
+test_index_response_status:
+  params:
+    - rout_url
+    - use_api_key
+  values:
+    - - "/api/v1/"
+      - true
+
+test_index_response_json:
+  params:
+    - rout_url
+    - use_api_key
+  values:
+    - - "/api/v1/"
+      - true
+
+test_index_expect_403:
+  params:
+    - rout_url
+    - use_api_key
+  values:
+    - - "/api/v1/"
+      - false  # without authentication

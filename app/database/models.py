@@ -1,10 +1,11 @@
 """Module for storage database models"""
 import datetime
 
+from fastapi import HTTPException, status
 from sqlalchemy import String, DateTime, ForeignKey, CheckConstraint, Date, Boolean
 from sqlalchemy import select, insert
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from fastapi import HTTPException, status
+
 from app.config import config
 from app.database.postgres import Base, use_session
 from app.utils.funcs import get_current_time_with_utc
@@ -32,11 +33,14 @@ class Role(Base):
         cascade="all, delete-orphan",
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Role(id={self.id!r}, role={self.role!r})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
+
+    def dict(self) -> dict:
+        return self.__dict__
 
     async def __is_role_exist(self) -> bool:
         """
@@ -80,14 +84,17 @@ class User(Base, DateFieldMixin):
     role_id: Mapped[int] = mapped_column(ForeignKey(Role.id))
     role: Mapped["Role"] = relationship(back_populates="users")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"User(id={self.id!r}, username={self.username!r}, password={self.password!r}, " \
                f"nickname={self.nickname!r}, email={self.email!r}, first_name={self.first_name!r}, " \
                f"last_name={self.last_name!r},  role_id={self.role_id!r}, role={self.role!r}, " \
                f"birthday={self.birthday!r}, main_photo={self.main_photo!r})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
+
+    def dict(self) -> dict:
+        return self.__dict__
 
     async def __is_user_exist(self) -> bool:
         """

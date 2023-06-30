@@ -9,7 +9,7 @@ from app.config import config
 from app.utils.file_worker import TomlWorker
 
 
-def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
+def __get_metadata_from_dict(project_data: dict) -> schemas.base.AppMetadata:
     """
     Function finds app metadata in the dict
 
@@ -23,12 +23,12 @@ def __get_metadata_from_dict(project_data: dict) -> schemas.AppMetadata:
     app_name = project_data.get("project").get("name")
     app_version = project_data.get("project").get("version")
     app_description = project_data.get("project").get("description")
-    response_schema = schemas.AppMetadata(name=app_name, version=app_version,
-                                          description=app_description)
+    response_schema = schemas.base.AppMetadata(name=app_name, version=app_version,
+                                               description=app_description)
     return response_schema
 
 
-async def get_app_metadata() -> schemas.AppInfo:
+async def get_app_metadata() -> schemas.response.AppInfo:
     """
     Function builds app metadata from pyproject.toml file
 
@@ -39,10 +39,10 @@ async def get_app_metadata() -> schemas.AppInfo:
     toml_worker = TomlWorker(config.init.pyproject_toml_path)
     data_from_pyproject_toml = await toml_worker.read_file()
     app_metadata = __get_metadata_from_dict(project_data=data_from_pyproject_toml)
-    response_schema = schemas.AppInfo(name=app_metadata.name, version=app_metadata.version,
-                                      description=app_metadata.description,
-                                      environment=config.logging.environment, run_mode=config.logging.run_mode,
-                                      logs_dir=config.logging.logging_dir)
+    response_schema = schemas.response.AppInfo(name=app_metadata.name, version=app_metadata.version,
+                                               description=app_metadata.description,
+                                               environment=config.logging.environment, run_mode=config.logging.run_mode,
+                                               logs_dir=config.logging.logging_dir)
     return response_schema
 
 

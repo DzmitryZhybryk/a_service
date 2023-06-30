@@ -3,6 +3,7 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 
 from app.config import config
+from email_validator import validate_email
 from app.utils import decorators
 from app.utils.funcs import make_confirm_registration_url, make_confirm_registration_message
 from app.utils.mail import mail_worker
@@ -38,7 +39,7 @@ def send_confirm_registration_email(email: str, username: str, confirm_key: str)
         HTTP_500_INTERNAL_SERVER_ERROR if message broker not available
 
     """
-    logger.info("test logger")
+    validate_email(email)
     confirm_registration_url = make_confirm_registration_url(key=confirm_key)
     message = make_confirm_registration_message(username=username, confirm_registration_url=confirm_registration_url)
     mail_worker.send_email(to=email, message=message, subject=f"Confirm registration")

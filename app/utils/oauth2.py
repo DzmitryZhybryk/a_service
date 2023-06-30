@@ -12,6 +12,11 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 class JWTManager:
     """
     Class works with JWT tokens
+
+    Methods:
+        create_access_token
+        create_refresh_token
+
     """
 
     def __init__(self):
@@ -37,6 +42,7 @@ class JWTManager:
         return encode_access_jwt
 
     def create_refresh_token(self) -> str:
+        """Method creates and return new refresh token"""
         refresh_token_expire = datetime.utcnow() + timedelta(days=config.secret.refresh_token_expire)
         to_encode = {"exp": refresh_token_expire}
         encode_refresh_jwt = jwt.encode(claims=to_encode, key=self.__secret_key, algorithm=self.__algorithm)

@@ -1,0 +1,201 @@
+test_registrate_response_status:
+  params:
+    - rout_url
+    - test_user
+    - use_api_key
+  values:
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: base_user
+      - true
+
+test_registrate_user:
+  params:
+    - rout_url
+    - test_user
+    - use_api_key
+  values:
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: base_user  # test create base user
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: admin  # test create admin
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: moderator  # test create moderator
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        role: moderator  # test create user without
+      - true
+
+test_registrate_user_expect_422:
+  params:
+    - rout_url
+    - test_user
+    - use_api_key
+  values:
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role  # unexpected user role
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: wrong_test_password  # wrong confirm password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role
+      - true
+    - - "/api/v1/registrate/"
+      - password: test_password
+        confirm_password: wrong_test_password  # without username
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        confirm_password: wrong_test_password  # without password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password  # without confirm password
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: wrong_test_password  # without nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: wrong_test_password  # without email
+        nickname: test_nickname
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: wrong_user_role
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: wrong_test_password  # without role
+        nickname: test_nickname
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+      - true
+
+test_registrate_user_expect_409:
+  params:
+    - rout_url
+    - test_user
+    - use_api_key
+  values:
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: admin  # nickname already exist
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: base_user
+      - true
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: test_nickname
+        email: admin@gmail.com  # email already exist
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: base_user
+      - true
+
+test_registrate_user_expected_403:
+  params:
+    - rout_url
+    - test_user
+    - use_api_key
+  values:
+    - - "/api/v1/registrate/"
+      - username: test_user
+        password: test_password
+        confirm_password: test_password
+        nickname: admin
+        email: test_email@gmail.com
+        first_name: test_first_name
+        last_name: test_last_name
+        birthday: "2023-06-08"
+        role: base_user
+      - false  # without authentication

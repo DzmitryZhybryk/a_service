@@ -6,7 +6,6 @@ import httpx
 import pytest
 import yaml
 from fastapi.testclient import TestClient
-from pytest import Metafunc
 
 from app.config import config
 from app.database.models import Role, User
@@ -17,8 +16,8 @@ CURRENT_DIR = Path(__file__).parent
 
 
 @lru_cache
-def read_json_file() -> dict:
-    with open(f"{CURRENT_DIR}/test_data.yaml", "r") as file:
+def read_json_file(file_name: str) -> dict:
+    with open(f"{CURRENT_DIR}/{file_name}.yaml", "r") as file:
         try:
             test_data = yaml.safe_load(file)
             return test_data
@@ -26,12 +25,13 @@ def read_json_file() -> dict:
             pass
 
 
-def pytest_generate_tests(metafunc) -> Metafunc:
-    all_params = read_json_file()
+def pytest_generate_tests(metafunc) -> None:
+    module_name = metafunc.module.__name__.split(".")[-1]
+    all_params = read_json_file(file_name=module_name)
     fct_name = metafunc.function.__name__
     if fct_name in all_params:
         func_params = all_params[fct_name]
-        return metafunc.parametrize(func_params["params"], func_params["values"])
+        metafunc.parametrize(func_params["params"], func_params["values"])
 
 
 @pytest.fixture(scope="session")
@@ -64,6 +64,8 @@ async def index_page(test_client: TestClient,
                      rout_url: str,
                      use_api_key: bool) -> AsyncGenerator[httpx.Response, None]:
     """Fixture make index page response"""
+    print("##################################")
+    print(rout_url, use_api_key)
     yield test_client.get(url=rout_url, headers=base_headers) if use_api_key else test_client.get(url=rout_url)
 
 

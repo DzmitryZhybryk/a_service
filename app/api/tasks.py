@@ -10,6 +10,7 @@ from app.utils.mail import mail_worker
 
 logger = get_task_logger(__name__)
 
+
 # celery = Celery(
 #     "celery_api",
 #     broker=f"pyamqp://{config.rabbitmq.rabbitmq_default_user}:{config.rabbitmq.rabbitmq_default_pass}@rabbitmq//",

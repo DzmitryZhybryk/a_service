@@ -84,6 +84,8 @@ class Email(BaseSettings):
 class Rabbitmq(BaseSettings):
     rabbitmq_default_user: str = "admin"
     rabbitmq_default_pass: str = "admin"
+    rabbitmq_user_login: str
+    rabbitmq_user_password: str
     rabbitmq_backend: str = "rpc://"
 
     class Config(BaseConfigMixin):
